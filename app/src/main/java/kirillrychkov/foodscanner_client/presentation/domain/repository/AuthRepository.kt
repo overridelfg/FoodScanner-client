@@ -1,4 +1,4 @@
-package kirillrychkov.foodscanner_client.presentation.domain.auth
+package kirillrychkov.foodscanner_client.presentation.domain.repository
 
 interface AuthRepository {
     fun login(email: String, password: String)

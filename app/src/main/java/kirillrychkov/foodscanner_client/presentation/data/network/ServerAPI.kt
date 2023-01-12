@@ -11,6 +11,5 @@ interface ServerAPI {
 
     @POST("register")
     suspend fun register(
-
     )
 }

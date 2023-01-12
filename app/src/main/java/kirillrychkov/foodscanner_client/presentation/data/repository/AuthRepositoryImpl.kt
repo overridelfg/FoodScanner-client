@@ -1,8 +1,8 @@
-package kirillrychkov.foodscanner_client.presentation.data.auth
+package kirillrychkov.foodscanner_client.presentation.data.repository
 
-import kirillrychkov.foodscanner_client.presentation.domain.auth.AuthRepository
+import kirillrychkov.foodscanner_client.presentation.domain.repository.AuthRepository
 
-object AuthRepositoryImpl : AuthRepository{
+object AuthRepositoryImpl : AuthRepository {
     override fun login(email: String, password: String) {
         TODO("Not yet implemented")
     }
