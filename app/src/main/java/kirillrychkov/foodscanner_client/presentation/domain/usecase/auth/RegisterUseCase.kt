@@ -4,10 +4,10 @@ import kirillrychkov.foodscanner_client.presentation.domain.OperationResult
 import kirillrychkov.foodscanner_client.presentation.domain.repository.AuthRepository
 import javax.inject.Inject
 
-class LoginUseCase (
+class RegisterUseCase (
     private val authRepository: AuthRepository
 ) {
-    operator fun invoke(email: String, password: String) : OperationResult<Unit, String?>{
-        return authRepository.login(email, password)
+    operator fun invoke(email: String, password: String, username: String) : OperationResult<Unit, String?> {
+        return authRepository.register(email, password, username)
     }
 }

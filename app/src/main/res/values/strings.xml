@@ -10,4 +10,5 @@
     <string name="email_hint">email</string>
     <string name="username_hint">username</string>
     <string name="create_account_btn_text">Создать аккаунт</string>
+    <string name="next_button">Далее</string>
 </resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.presentation.barcodescan.BarcodeScannerFragment">
+
+   <FrameLayout
+       android:id="@+id/container"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:background="@color/black">
+       
+       <androidx.camera.view.PreviewView
+           android:id="@+id/previewView"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"/>
+       
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="718dp">
+
+           <ImageView
+               android:id="@+id/image"
+               android:layout_width="300dp"
+               android:layout_height="300dp"
+               android:layout_centerInParent="true"
+               android:background="@drawable/background_camera_boarders" />
+       </RelativeLayout>
+   </FrameLayout>
+
+
+</FrameLayout>

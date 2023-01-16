@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#4885ED"
-    tools:context=".presentation.presentation.auth.registration.RegisterFragment">
+    tools:context=".presentation.presentation.auth.RegisterFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_login"

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/choose_restrictions_navigation"
+    app:startDestination="@id/chooseDietsFragment">
+
+    <fragment
+        android:id="@+id/chooseDietsFragment"
+        android:name="kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseDietsFragment"
+        android:label="fragment_choose_diets"
+        tools:layout="@layout/fragment_choose_diets" />
+</navigation>

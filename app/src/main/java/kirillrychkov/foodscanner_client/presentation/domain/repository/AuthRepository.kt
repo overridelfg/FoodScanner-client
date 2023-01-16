@@ -1,7 +1,9 @@
 package kirillrychkov.foodscanner_client.presentation.domain.repository
 
-interface AuthRepository {
-    fun login(email: String, password: String)
+import kirillrychkov.foodscanner_client.presentation.domain.OperationResult
 
-    fun registration(username: String, email: String, password: String)
+interface AuthRepository {
+    fun login(email: String, password: String) : OperationResult<Unit, String?>
+
+    fun register(username: String, email: String, password: String) : OperationResult<Unit, String?>
 }
