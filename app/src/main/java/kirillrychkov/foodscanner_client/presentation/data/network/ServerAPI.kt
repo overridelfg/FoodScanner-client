@@ -6,23 +6,33 @@ import retrofit2.http.POST
 
 
 interface ServerAPI {
-    @POST("login")
+//    @POST("login")
     suspend fun login(
         loginRequestDTO: LoginRequestDTO
     ) : LoginResponseDTO
 
-    @POST("register")
+//    @POST("register")
     suspend fun register(
         registerRequestDTO: RegisterRequestDTO
     ) : LoginResponseDTO
 
-    @GET("restrictions/diets")
+//    @GET("restrictions/diets")
     suspend fun getDiets(
 
     ) : List<DietDTO>
 
-    @GET("restrictions/allergens")
+//    @GET("restrictions/allergens")
     suspend fun getAllergens(
 
     ) : List<AllergenDTO>
+
+//    @GET("restrictions/userRestrictions")
+    suspend fun getUserRestrictions(
+        userId: Int
+    ): UserRestrictionsDTO
+
+//    @POST("restrictions/postUserRestrictions")
+    suspend fun postUserRestrictions(
+        userRestrictionsDTO: UserRestrictionsDTO
+    ): UserRestrictionsDTO
 }

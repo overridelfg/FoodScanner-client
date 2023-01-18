@@ -2,60 +2,56 @@ package kirillrychkov.foodscanner_client.presentation.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kirillrychkov.foodscanner_client.presentation.domain.OperationResult
 import kirillrychkov.foodscanner_client.presentation.domain.entity.Allergen
 import kirillrychkov.foodscanner_client.presentation.domain.entity.Diet
 import kirillrychkov.foodscanner_client.presentation.domain.entity.Ingredient
+import kirillrychkov.foodscanner_client.presentation.domain.entity.UserRestrictions
 import kirillrychkov.foodscanner_client.presentation.domain.repository.ChooseRestrictionsRepository
 
 class ChooseRestrictionsRepositoryImpl: ChooseRestrictionsRepository {
 
-    private val dietsListLD = MutableLiveData<List<Diet>>()
     private val dietsList = mutableListOf<Diet>()
 
-    private val allergensListLD = MutableLiveData<List<Allergen>>()
     private val allergensList = mutableListOf<Allergen>()
 
-    private val ingredientsListLD = MutableLiveData<List<Ingredient>>()
     private val ingredientsList = mutableListOf<Ingredient>()
 
     init {
         for (i in 0 until 99){
-            dietsList.add(Diet("Диета + $i"))
+            dietsList.add(Diet(i, "Диета + $i"))
         }
 
         for (i in 0 until 99){
-            allergensList.add(Allergen("Аллерген + $i"))
+            allergensList.add(Allergen(i, "Аллерген + $i"))
         }
 
         for (i in 0 until 99){
-            ingredientsList.add(Ingredient("Ингредиент + $i"))
+            ingredientsList.add(Ingredient(i, "Ингредиент + $i"))
         }
     }
 
-    override fun getDiets(): LiveData<List<Diet>> {
-        updateDietsList()
-        return dietsListLD
+    override fun getDiets(): OperationResult<List<Diet>, String?> {
+        try{
+            return OperationResult.Success(dietsList)
+        }catch (e: Exception){
+            return OperationResult.Error(e.message)
+        }
     }
 
-    override fun getAllergens(): LiveData<List<Allergen>> {
-        updateAllergensList()
-        return allergensListLD
+    override fun getAllergens(): OperationResult<List<Allergen>, String?> {
+        try{
+            return OperationResult.Success(allergensList)
+        }catch (e: Exception){
+            return OperationResult.Error(e.message)
+        }
     }
 
-    override fun getIngredients(): LiveData<List<Ingredient>> {
-        updateIngredientsList()
-        return ingredientsListLD
-    }
-
-    private fun updateDietsList(){
-        dietsListLD.value = dietsList.toList()
-    }
-
-    private fun updateAllergensList(){
-        allergensListLD.value = allergensList.toList()
-    }
-
-    private fun updateIngredientsList(){
-        ingredientsListLD.value = ingredientsList.toList()
+    override fun getIngredients(): OperationResult<List<Ingredient>, String?> {
+        try{
+            return OperationResult.Success(ingredientsList)
+        }catch (e: Exception){
+            return OperationResult.Error(e.message)
+        }
     }
 }

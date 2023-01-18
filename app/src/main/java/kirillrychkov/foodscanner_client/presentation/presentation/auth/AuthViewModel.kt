@@ -45,7 +45,7 @@ class AuthViewModel() : ViewModel() {
                 _loginResult.value = ViewState.loading()
                 val result = loginUseCase.invoke(email, password)
                 _loginResult.value = when (result) {
-                    is OperationResult.Error -> ViewState.error(Unit, result.data)
+                    is OperationResult.Error -> ViewState.error(result.data)
                     is OperationResult.Success -> ViewState.success(result.data)
                 }
             }
@@ -59,7 +59,7 @@ class AuthViewModel() : ViewModel() {
                 _loginResult.value = ViewState.loading()
                 val result = registerUserCase.invoke(email, password, username)
                 _loginResult.value = when (result) {
-                    is OperationResult.Error -> ViewState.error(Unit, result.data)
+                    is OperationResult.Error -> ViewState.error(result.data)
                     is OperationResult.Success -> ViewState.success(result.data)
                 }
             }

@@ -2,6 +2,7 @@ package kirillrychkov.foodscanner_client.presentation.presentation.restrictions
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.presentation.domain.entity.Diet
@@ -14,6 +15,9 @@ class ChooseRestrictionsAdapter : RecyclerView.Adapter<RestrictionViewHolder>() 
         field = value
     }
 
+    var onRestrictionCheckListener: ((Restriction) -> Unit)? = null
+    var onRestrictionUncheckListener: ((Restriction) -> Unit)? = null
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -23,7 +27,15 @@ class ChooseRestrictionsAdapter : RecyclerView.Adapter<RestrictionViewHolder>() 
     }
 
     override fun onBindViewHolder(holder: RestrictionViewHolder, position: Int) {
-        holder.tvName.text = restrictionsList[position].title
+        val currentItem = restrictionsList[position]
+        holder.tvName.text = currentItem.title
+        holder.cbRestriction.setOnClickListener {
+            if((it as CheckBox).isChecked){
+                onRestrictionCheckListener?.invoke(currentItem)
+            }else{
+                onRestrictionUncheckListener?.invoke(currentItem)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
