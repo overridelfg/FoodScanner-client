@@ -4,10 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kirillrychkov.foodscanner_client.R
+import kirillrychkov.foodscanner_client.presentation.domain.entity.Diet
+import kirillrychkov.foodscanner_client.presentation.domain.entity.Restriction
 
 class ChooseRestrictionsAdapter : RecyclerView.Adapter<RestrictionViewHolder>() {
 
-    var restrictionsList = mutableListOf<String>()
+    var restrictionsList = listOf<Restriction>()
     set(value) {
         field = value
     }
@@ -21,7 +23,7 @@ class ChooseRestrictionsAdapter : RecyclerView.Adapter<RestrictionViewHolder>() 
     }
 
     override fun onBindViewHolder(holder: RestrictionViewHolder, position: Int) {
-        holder.tvName.text = restrictionsList[position]
+        holder.tvName.text = restrictionsList[position].title
     }
 
     override fun getItemCount(): Int {

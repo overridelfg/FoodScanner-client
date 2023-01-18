@@ -11,4 +11,6 @@
     <string name="username_hint">username</string>
     <string name="create_account_btn_text">Создать аккаунт</string>
     <string name="next_button">Далее</string>
+    <string name="choose_allergens_text">Каких из этих аллергенов Вы придерживаетесь?</string>
+    <string name="choose_diets_text">Каких из этих диет Вы придерживаетесь?</string>
 </resources>

@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1B1B1B"
-    tools:context=".presentation.presentation.restrictions.ChooseDietsFragment">
+    tools:context=".presentation.presentation.restrictions.ChooseAllergensFragment">
 
     <TextView
-        android:id="@+id/tv_title_diets"
+        android:id="@+id/tv_title_allergens"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
         android:layout_marginHorizontal="20sp"
-        android:text="@string/choose_diets_text"
+        android:text="@string/choose_allergens_text"
         android:textColor="@color/white"
         android:textSize="25sp"
         android:textStyle="bold"
@@ -31,7 +31,7 @@
         app:layout_constraintBottom_toTopOf="@id/next_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title_diets"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_allergens"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_restriction"/>
 
@@ -50,4 +50,5 @@
         app:layout_constraintTop_toBottomOf="@id/rv_restrictions_list"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

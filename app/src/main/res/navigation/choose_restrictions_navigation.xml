@@ -9,5 +9,14 @@
         android:id="@+id/chooseDietsFragment"
         android:name="kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseDietsFragment"
         android:label="fragment_choose_diets"
-        tools:layout="@layout/fragment_choose_diets" />
+        tools:layout="@layout/fragment_choose_diets" >
+        <action
+            android:id="@+id/action_chooseDietsFragment_to_chooseAllergensFragment"
+            app:destination="@id/chooseAllergensFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseAllergensFragment"
+        android:name="kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseAllergensFragment"
+        android:label="fragment_choose_allergens"
+        tools:layout="@layout/fragment_choose_allergens" />
 </navigation>
