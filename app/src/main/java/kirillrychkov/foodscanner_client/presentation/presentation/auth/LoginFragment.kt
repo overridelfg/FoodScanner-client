@@ -1,6 +1,6 @@
 package kirillrychkov.foodscanner_client.presentation.presentation.auth
 
-import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,22 +8,44 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.databinding.FragmentLoginBinding
-import kirillrychkov.foodscanner_client.presentation.presentation.MainActivity.Companion.newIntentMainActivity
+import kirillrychkov.foodscanner_client.presentation.presentation.FoodScannerApp
+import kirillrychkov.foodscanner_client.presentation.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewState
-import kirillrychkov.foodscanner_client.presentation.presentation.base.BaseFragment
 import kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseRestrictionsActivity.Companion.newIntentChooseRestrictions
+import javax.inject.Inject
 
 
-class LoginFragment : BaseFragment<FragmentLoginBinding, AuthViewModel>(
-    FragmentLoginBinding::inflate
-) {
+class LoginFragment : Fragment() {
 
-    override fun getViewModel() = AuthViewModel::class.java
+    private var _binding: FragmentLoginBinding? = null
+    private val binding:  FragmentLoginBinding
+        get() = _binding ?: throw RuntimeException("FragmentLoginBinding == null")
+    private lateinit var viewModel: AuthViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy{
+        FoodScannerApp.appComponent
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        viewModel = ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

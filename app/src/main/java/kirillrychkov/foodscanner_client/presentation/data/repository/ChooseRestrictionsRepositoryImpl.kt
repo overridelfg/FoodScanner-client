@@ -8,8 +8,9 @@ import kirillrychkov.foodscanner_client.presentation.domain.entity.Diet
 import kirillrychkov.foodscanner_client.presentation.domain.entity.Ingredient
 import kirillrychkov.foodscanner_client.presentation.domain.entity.UserRestrictions
 import kirillrychkov.foodscanner_client.presentation.domain.repository.ChooseRestrictionsRepository
+import javax.inject.Inject
 
-class ChooseRestrictionsRepositoryImpl: ChooseRestrictionsRepository {
+class ChooseRestrictionsRepositoryImpl @Inject constructor(): ChooseRestrictionsRepository {
 
     private val dietsList = mutableListOf<Diet>()
 

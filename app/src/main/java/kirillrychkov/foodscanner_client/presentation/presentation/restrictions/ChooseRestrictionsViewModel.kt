@@ -15,14 +15,13 @@ import kirillrychkov.foodscanner_client.presentation.domain.usecase.restrictions
 import kirillrychkov.foodscanner_client.presentation.domain.usecase.restrictions.GetIngredientsListUseCase
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewState
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChooseRestrictionsViewModel : ViewModel() {
-    private val repository = ChooseRestrictionsRepositoryImpl()
-    private val getDietsListUseCase: GetDietsListUseCase = GetDietsListUseCase(repository)
-    private val getAllergensListUseCase: GetAllergensListUseCase =
-        GetAllergensListUseCase(repository)
-    private val getIngredientsListUseCase: GetIngredientsListUseCase =
-        GetIngredientsListUseCase(repository)
+class ChooseRestrictionsViewModel @Inject constructor(
+    private val getDietsListUseCase: GetDietsListUseCase,
+    private val getAllergensListUseCase: GetAllergensListUseCase,
+    private val getIngredientsListUseCase: GetIngredientsListUseCase
+) : ViewModel() {
 
     private val _dietsList = MutableLiveData<ViewState<List<Diet>, String?>>()
     val dietsList : LiveData<ViewState<List<Diet>, String?>>

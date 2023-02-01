@@ -1,9 +1,7 @@
 package kirillrychkov.foodscanner_client.presentation.presentation.auth
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
 import kirillrychkov.foodscanner_client.presentation.data.repository.AuthRepositoryImpl
 import kirillrychkov.foodscanner_client.presentation.domain.OperationResult
 import kirillrychkov.foodscanner_client.presentation.domain.usecase.auth.LoginUseCase
@@ -12,11 +10,10 @@ import kirillrychkov.foodscanner_client.presentation.presentation.ViewState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class AuthViewModel() : ViewModel() {
-
-    private val repository = AuthRepositoryImpl()
-    private val loginUseCase: LoginUseCase = LoginUseCase(repository)
-    private val registerUserCase: RegisterUseCase = RegisterUseCase(repository)
+class AuthViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase,
+    private val registerUserCase: RegisterUseCase
+) : ViewModel() {
 
     private val _loginResult = MutableLiveData<ViewState<Unit, String?>>()
     val loginResult: LiveData<ViewState<Unit, String?>>

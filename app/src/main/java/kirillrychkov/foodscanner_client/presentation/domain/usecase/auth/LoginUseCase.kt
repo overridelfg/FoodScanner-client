@@ -4,7 +4,7 @@ import kirillrychkov.foodscanner_client.presentation.domain.OperationResult
 import kirillrychkov.foodscanner_client.presentation.domain.repository.AuthRepository
 import javax.inject.Inject
 
-class LoginUseCase (
+class LoginUseCase @Inject constructor (
     private val authRepository: AuthRepository
 ) {
     operator fun invoke(email: String, password: String) : OperationResult<Unit, String?>{

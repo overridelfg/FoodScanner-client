@@ -1,24 +1,55 @@
 package kirillrychkov.foodscanner_client.presentation.presentation.restrictions
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.databinding.FragmentChooseDietsBinding
 import kirillrychkov.foodscanner_client.presentation.domain.entity.Diet
+import kirillrychkov.foodscanner_client.presentation.presentation.FoodScannerApp
+import kirillrychkov.foodscanner_client.presentation.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewState
-import kirillrychkov.foodscanner_client.presentation.presentation.base.BaseFragment
+import javax.inject.Inject
 
 
-class ChooseDietsFragment : BaseFragment<FragmentChooseDietsBinding, ChooseRestrictionsViewModel>(
-    FragmentChooseDietsBinding::inflate
-) {
+class ChooseDietsFragment : Fragment() {
+
+    private var _binding: FragmentChooseDietsBinding? = null
+    private val binding: FragmentChooseDietsBinding
+        get() = _binding ?: throw RuntimeException("FragmentChooseDietsBinding == null")
+    private lateinit var viewModel: ChooseRestrictionsViewModel
 
     private lateinit var adapter: ChooseRestrictionsAdapter
     private val selectedDiets: MutableList<Diet> = mutableListOf()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy{
+        FoodScannerApp.appComponent
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        viewModel = ViewModelProvider(this, viewModelFactory)[ChooseRestrictionsViewModel::class.java]
+        _binding = FragmentChooseDietsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,7 +70,6 @@ class ChooseDietsFragment : BaseFragment<FragmentChooseDietsBinding, ChooseRestr
                     ""
                 }
             }
-
         }
     }
 
@@ -59,10 +89,6 @@ class ChooseDietsFragment : BaseFragment<FragmentChooseDietsBinding, ChooseRestr
             selectedDiets.remove(it as Diet)
         }
         rvShopList.adapter = adapter
-    }
-
-    override fun getViewModel(): Class<ChooseRestrictionsViewModel> {
-        return ChooseRestrictionsViewModel::class.java
     }
 
 }

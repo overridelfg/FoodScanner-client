@@ -1,21 +1,48 @@
 package kirillrychkov.foodscanner_client.presentation.presentation.restrictions
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kirillrychkov.foodscanner_client.R
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import kirillrychkov.foodscanner_client.databinding.FragmentChooseAllergensBinding
-import kirillrychkov.foodscanner_client.databinding.FragmentChooseDietsBinding
+import kirillrychkov.foodscanner_client.presentation.presentation.FoodScannerApp
+import kirillrychkov.foodscanner_client.presentation.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewState
-import kirillrychkov.foodscanner_client.presentation.presentation.base.BaseFragment
+import javax.inject.Inject
 
-class ChooseAllergensFragment : BaseFragment<FragmentChooseAllergensBinding, ChooseRestrictionsViewModel>(
-    FragmentChooseAllergensBinding::inflate
-) {
+class ChooseAllergensFragment : Fragment() {
 
     private lateinit var adapter: ChooseRestrictionsAdapter
+
+    private var _binding: FragmentChooseAllergensBinding? = null
+    private val binding: FragmentChooseAllergensBinding
+        get() = _binding ?: throw RuntimeException("FragmentChooseAllergensBinding == null")
+    private lateinit var viewModel: ChooseRestrictionsViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy{
+        FoodScannerApp.appComponent
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        viewModel = ViewModelProvider(this, viewModelFactory)[ChooseRestrictionsViewModel::class.java]
+        _binding = FragmentChooseAllergensBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,9 +71,4 @@ class ChooseAllergensFragment : BaseFragment<FragmentChooseAllergensBinding, Cho
         adapter = ChooseRestrictionsAdapter()
         rvShopList.adapter = adapter
     }
-
-    override fun getViewModel(): Class<ChooseRestrictionsViewModel> {
-        return ChooseRestrictionsViewModel::class.java
-    }
-
 }
