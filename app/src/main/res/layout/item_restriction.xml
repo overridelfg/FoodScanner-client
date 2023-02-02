@@ -17,13 +17,13 @@
         android:layout_height="wrap_content"
         android:background="#2c2e30"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="5dp">
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/cb_restriction"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:theme="@style/MyCheckBox"/>
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:theme="@style/MyCheckBox" />
 
         <TextView
             android:id="@+id/tv_name"

@@ -1,5 +1,6 @@
 package kirillrychkov.foodscanner_client.presentation.presentation.auth
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,8 +11,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kirillrychkov.foodscanner_client.databinding.FragmentLoginBinding
 import kirillrychkov.foodscanner_client.databinding.FragmentRegisterBinding
+import kirillrychkov.foodscanner_client.presentation.presentation.FoodScannerApp
+import kirillrychkov.foodscanner_client.presentation.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewState
 import kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseRestrictionsActivity
+import javax.inject.Inject
 
 class RegisterFragment : Fragment() {
 
@@ -20,12 +24,24 @@ class RegisterFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentRegisterBinding == null")
     private lateinit var viewModel: AuthViewModel
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy{
+        FoodScannerApp.appComponent
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         return binding.root
     }
