@@ -35,9 +35,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20sp"
             android:layout_marginTop="70dp"
-            android:text="Log in"
+            android:text="@string/sign_in"
+            android:fontFamily="@font/open_sans_bold"
             android:textColor="@color/white"
-            android:textSize="25sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -51,6 +52,7 @@
             android:layout_marginTop="10sp"
             android:textColorHint="@color/white"
             app:startIconTint="@color/white"
+            app:errorEnabled="true"
             app:startIconDrawable="@drawable/icon_email"
             app:boxStrokeColor="#4885ed"
             app:hintTextColor="#4885ed"
@@ -64,7 +66,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/email_hint"
+                android:fontFamily="@font/open_sans_light"
                 android:inputType="text"
+                android:textSize="18sp"
                 android:lines="1"
                 android:textColor="@color/white"
                 android:textCursorDrawable="@color/white" />
@@ -76,9 +80,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20sp"
-            android:layout_marginTop="30sp"
+            android:layout_marginTop="4sp"
             android:textColorHint="@color/white"
             app:boxStrokeWidth="2dp"
+            app:errorEnabled="true"
             app:startIconTint="@color/white"
             app:boxStrokeColor="#4885ed"
             app:hintTextColor="#4885ed"
@@ -94,8 +99,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/password_hint"
+                android:fontFamily="@font/open_sans_light"
                 android:inputType="textPassword"
                 android:lines="1"
+                android:textSize="18sp"
                 android:textColor="@color/white"
                 android:textCursorDrawable="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -105,8 +112,12 @@
             android:layout_width="match_parent"
             android:layout_height="60sp"
             android:layout_marginHorizontal="20sp"
-            android:text="@string/login_btn_text"
+            android:text="@string/sign_in"
+            android:fontFamily="@font/open_sans_medium"
+            android:textAllCaps="false"
+            android:textSize="20sp"
             app:backgroundTint="#4885ed"
+            android:letterSpacing="0"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintBottom_toTopOf="@id/registerButton"
             app:layout_constraintEnd_toEndOf="parent"
@@ -117,16 +128,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20sp"
-            android:layout_marginTop="20sp"
             android:layout_marginBottom="20sp"
+            android:fontFamily="@font/open_sans_light"
             android:text="@string/create_account"
             android:textColor="@color/white"
             android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/loginButton"
-            app:layout_constraintStart_toStartOf="@+id/loginButton"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="@+id/loginButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_login"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,11 +6,13 @@
     <string name="create_account"><u>Don\'t have an account? Sign Up</u></string>
     <string name="login_account"><u>Already have an account? Sign In</u></string>
     <string name="login_btn_text">Войти</string>
-    <string name="password_hint">password</string>
-    <string name="email_hint">email</string>
-    <string name="username_hint">username</string>
+    <string name="password_hint">Password</string>
+    <string name="email_hint">Email</string>
+    <string name="username_hint">Username</string>
     <string name="create_account_btn_text">Создать аккаунт</string>
     <string name="next_button">Далее</string>
     <string name="choose_allergens_text">Каких из этих аллергенов Вы придерживаетесь?</string>
     <string name="choose_diets_text">Каких из этих диет Вы придерживаетесь?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
 </resources>

@@ -2,6 +2,7 @@ package kirillrychkov.foodscanner_client.presentation.presentation.restrictions
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,8 +50,6 @@ class ChooseDietsFragment : Fragment() {
         return binding.root
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeDietsList()
@@ -75,6 +74,7 @@ class ChooseDietsFragment : Fragment() {
 
     private fun launchChooseAllergensFragment(){
         binding.nextButton.setOnClickListener {
+            Log.d("Diets", selectedDiets.toString())
             findNavController().navigate(R.id.action_chooseDietsFragment_to_chooseAllergensFragment)
         }
     }
@@ -90,5 +90,4 @@ class ChooseDietsFragment : Fragment() {
         }
         rvShopList.adapter = adapter
     }
-
 }

@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kirillrychkov.foodscanner_client.databinding.FragmentLoginBinding
@@ -70,14 +71,14 @@ class RegisterFragment : Fragment() {
         viewModel.loginResult.observe(viewLifecycleOwner){
             when (it) {
                 is ViewState.Loading -> {
-//                    binding.progressBar.isVisible = true
+                    binding.pbRegister.isVisible = true
                 }
                 is ViewState.Error -> {
-//                  binding.progressBar.isVisible = false
+                    binding.pbRegister.isVisible = false
 //                    showError(it.result ?: "Unknown login error")
                 }
                 is ViewState.Success -> {
-//                  binding.progressBar.isVisible = false
+                    binding.pbRegister.isVisible = false
                     startActivity(
                         ChooseRestrictionsActivity.newIntentChooseRestrictions(
                             requireContext()
