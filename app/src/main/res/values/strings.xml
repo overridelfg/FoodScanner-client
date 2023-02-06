@@ -10,9 +10,12 @@
     <string name="email_hint">Email</string>
     <string name="username_hint">Username</string>
     <string name="create_account_btn_text">Создать аккаунт</string>
-    <string name="next_button">Далее</string>
+    <string name="next_button">Next</string>
+    <string name="skip_button">Skip</string>
     <string name="choose_allergens_text">Каких из этих аллергенов Вы придерживаетесь?</string>
     <string name="choose_diets_text">Каких из этих диет Вы придерживаетесь?</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
+    <string name="profile">Profile</string>
+    <string name="scan">Scan</string>
 </resources>

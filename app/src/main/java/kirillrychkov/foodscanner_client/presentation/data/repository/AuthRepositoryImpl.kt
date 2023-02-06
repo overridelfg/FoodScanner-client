@@ -15,7 +15,13 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
 
     override fun login(email: String, password: String): OperationResult<Unit, String?> {
-        prefsStorage.saveToSharedPreferences(User(1, "username = username", email = email, password = password, token = "11231"))
+        prefsStorage.saveToSharedPreferences(
+            User(
+                id = 1,
+                username = "username",
+                email = email,
+                password = password,
+                token = "11231"))
         return OperationResult.Success(Unit)
     }
 
@@ -24,8 +30,22 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String
     ): OperationResult<Unit, String?> {
-        prefsStorage.saveToSharedPreferences(User(1, username = username, email = email, password = password, token = "11231"))
+        prefsStorage.saveToSharedPreferences(
+            User(
+                id = 1,
+                username = "username",
+                email = email,
+                password = password,
+                token = "11231"))
         return OperationResult.Success(Unit)
     }
 
+    override fun logout() {
+        prefsStorage.saveToSharedPreferences(null)
+    }
+
+    override fun getUser(): User? {
+        //prefsStorage.getUser()
+        return null
+    }
 }

@@ -7,7 +7,12 @@
 
     <fragment
         android:id="@+id/barcodeScannerFragment"
-        android:name="kirillrychkov.foodscanner_client.presentation.presentation.barcodescan.BarcodeScannerFragment"
+        android:name="kirillrychkov.foodscanner_client.presentation.presentation.mainpage.barcodescan.BarcodeScannerFragment"
         android:label="fragment_barcode_scanner"
         tools:layout="@layout/fragment_barcode_scanner" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="kirillrychkov.foodscanner_client.presentation.presentation.mainpage.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

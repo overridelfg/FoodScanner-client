@@ -68,7 +68,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun subscribeRegisterResult(){
-        viewModel.loginResult.observe(viewLifecycleOwner){
+        viewModel.registerResult.observe(viewLifecycleOwner){
             when (it) {
                 is ViewState.Loading -> {
                     binding.pbRegister.isVisible = true

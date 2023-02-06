@@ -9,6 +9,7 @@ import kirillrychkov.foodscanner_client.presentation.domain.repository.AuthRepos
 import kirillrychkov.foodscanner_client.presentation.domain.repository.ChooseRestrictionsRepository
 import kirillrychkov.foodscanner_client.presentation.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.presentation.presentation.MainActivity
+import kirillrychkov.foodscanner_client.presentation.presentation.SplashActivity
 import kirillrychkov.foodscanner_client.presentation.presentation.auth.AuthActivity
 import kirillrychkov.foodscanner_client.presentation.presentation.auth.LoginFragment
 import kirillrychkov.foodscanner_client.presentation.presentation.auth.RegisterFragment
@@ -24,6 +25,8 @@ interface AppComponent{
 
     fun inject(app: FoodScannerApp)
 
+    fun inject(splashActivity: SplashActivity)
+
     fun inject(loginFragment: LoginFragment)
 
     fun inject(registerFragment: RegisterFragment)
@@ -31,6 +34,7 @@ interface AppComponent{
     fun inject(chooseDietsFragment: ChooseDietsFragment)
 
     fun inject(chooseAllergensFragment: ChooseAllergensFragment)
+
 
     @Component.Builder
     interface Builder {

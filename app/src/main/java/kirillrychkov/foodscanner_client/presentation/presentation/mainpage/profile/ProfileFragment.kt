@@ -1,4 +1,4 @@
-package kirillrychkov.foodscanner_client.presentation.presentation.profile
+package kirillrychkov.foodscanner_client.presentation.presentation.mainpage.profile
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

@@ -12,7 +12,9 @@ import androidx.navigation.fragment.findNavController
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.databinding.FragmentChooseDietsBinding
 import kirillrychkov.foodscanner_client.presentation.domain.entity.Diet
+import kirillrychkov.foodscanner_client.presentation.domain.repository.AuthRepository
 import kirillrychkov.foodscanner_client.presentation.presentation.FoodScannerApp
+import kirillrychkov.foodscanner_client.presentation.presentation.MainActivity
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewState
 import javax.inject.Inject
@@ -30,6 +32,9 @@ class ChooseDietsFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var authRepository: AuthRepository
 
     private val component by lazy{
         FoodScannerApp.appComponent
@@ -54,8 +59,12 @@ class ChooseDietsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         subscribeDietsList()
         setupRecyclerView()
+        subscribeIsSelectedDiets()
         viewModel.getDietsList()
         launchChooseAllergensFragment()
+        if(selectedDiets.isEmpty()){
+            viewModel.resetSelectedDietsEmpty()
+        }
     }
 
     private fun subscribeDietsList(){
@@ -75,6 +84,8 @@ class ChooseDietsFragment : Fragment() {
     private fun launchChooseAllergensFragment(){
         binding.nextButton.setOnClickListener {
             Log.d("Diets", selectedDiets.toString())
+            val intent = MainActivity.newIntentMainActivity(requireContext())
+            startActivity(intent)
             findNavController().navigate(R.id.action_chooseDietsFragment_to_chooseAllergensFragment)
         }
     }
@@ -84,10 +95,26 @@ class ChooseDietsFragment : Fragment() {
         adapter = ChooseRestrictionsAdapter()
         adapter.onRestrictionCheckListener = {
             selectedDiets.add(it as Diet)
+            if(selectedDiets.size == 1){
+                viewModel.resetSelectedDietsNotEmpty()
+            }
         }
         adapter.onRestrictionUncheckListener = {
             selectedDiets.remove(it as Diet)
+            if(selectedDiets.isEmpty()){
+                viewModel.resetSelectedDietsEmpty()
+            }
         }
         rvShopList.adapter = adapter
+    }
+
+    private fun subscribeIsSelectedDiets(){
+        viewModel.isSelectedDiets.observe(viewLifecycleOwner){
+            if(it){
+                binding.nextButton.text = "Next"
+            }else{
+                binding.nextButton.text = "Skip"
+            }
+        }
     }
 }

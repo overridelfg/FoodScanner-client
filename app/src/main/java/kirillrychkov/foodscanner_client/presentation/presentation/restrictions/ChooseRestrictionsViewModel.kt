@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-
-import kirillrychkov.foodscanner_client.presentation.data.repository.ChooseRestrictionsRepositoryImpl
 import kirillrychkov.foodscanner_client.presentation.domain.OperationResult
 import kirillrychkov.foodscanner_client.presentation.domain.entity.Allergen
 import kirillrychkov.foodscanner_client.presentation.domain.entity.Diet
@@ -25,7 +23,7 @@ class ChooseRestrictionsViewModel @Inject constructor(
 
     private val _dietsList = MutableLiveData<ViewState<List<Diet>, String?>>()
     val dietsList : LiveData<ViewState<List<Diet>, String?>>
-    get() = _dietsList
+        get() = _dietsList
 
     private val _allergensList = MutableLiveData<ViewState<List<Allergen>, String?>>()
     val allergensList : LiveData<ViewState<List<Allergen>, String?>>
@@ -34,6 +32,10 @@ class ChooseRestrictionsViewModel @Inject constructor(
     private val _ingredientsList = MutableLiveData<ViewState<List<Ingredient>, String?>>()
     val ingredientsList : LiveData<ViewState<List<Ingredient>, String?>>
         get() = _ingredientsList
+
+    private val _isSelectedDiets = MutableLiveData<Boolean>()
+    val isSelectedDiets: LiveData<Boolean>
+        get() = _isSelectedDiets
 
     fun getDietsList(){
         viewModelScope.launch {
@@ -66,5 +68,13 @@ class ChooseRestrictionsViewModel @Inject constructor(
                 is OperationResult.Success -> ViewState.success(result.data)
             }
         }
+    }
+
+    fun resetSelectedDietsNotEmpty(){
+        _isSelectedDiets.value = true
+    }
+
+    fun resetSelectedDietsEmpty(){
+        _isSelectedDiets.value = false
     }
 }

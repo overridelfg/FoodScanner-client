@@ -1,4 +1,4 @@
-package kirillrychkov.foodscanner_client.presentation.presentation.barcodescan
+package kirillrychkov.foodscanner_client.presentation.presentation.mainpage.barcodescan
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
