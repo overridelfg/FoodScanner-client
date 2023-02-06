@@ -10,12 +10,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import kirillrychkov.foodscanner_client.databinding.FragmentLoginBinding
 import kirillrychkov.foodscanner_client.databinding.FragmentRegisterBinding
 import kirillrychkov.foodscanner_client.presentation.presentation.FoodScannerApp
+import kirillrychkov.foodscanner_client.presentation.presentation.MainActivity
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewState
-import kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseRestrictionsActivity
 import javax.inject.Inject
 
 class RegisterFragment : Fragment() {
@@ -57,7 +56,7 @@ class RegisterFragment : Fragment() {
             val email = binding.emailEditText.text.toString()
             val username = binding.usernameEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
-            viewModel.register(email, password, username)
+//            viewModel.register(email, password, username)
         }
     }
 
@@ -79,11 +78,7 @@ class RegisterFragment : Fragment() {
                 }
                 is ViewState.Success -> {
                     binding.pbRegister.isVisible = false
-                    startActivity(
-                        ChooseRestrictionsActivity.newIntentChooseRestrictions(
-                            requireContext()
-                        )
-                    )
+                    startActivity(MainActivity.newIntentMainActivity(requireContext()))
                     requireActivity().finish()
                 }
             }

@@ -15,9 +15,9 @@ import androidx.navigation.fragment.findNavController
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.databinding.FragmentLoginBinding
 import kirillrychkov.foodscanner_client.presentation.presentation.FoodScannerApp
+import kirillrychkov.foodscanner_client.presentation.presentation.MainActivity
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewState
-import kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseRestrictionsActivity.Companion.newIntentChooseRestrictions
 import javax.inject.Inject
 
 
@@ -66,7 +66,7 @@ class LoginFragment : Fragment() {
 
     private fun launchRegisterFragment(){
         binding.registerButton.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_chooseDietsFragment)
         }
     }
 
@@ -107,7 +107,7 @@ class LoginFragment : Fragment() {
                 }
                 is ViewState.Success -> {
                     binding.pbLogin.isVisible = true
-                    startActivity(newIntentChooseRestrictions(requireContext()))
+                    startActivity(MainActivity.newIntentMainActivity(requireContext()))
                     requireActivity().finish()
                 }
             }

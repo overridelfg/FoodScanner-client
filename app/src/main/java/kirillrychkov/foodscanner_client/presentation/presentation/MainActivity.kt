@@ -9,9 +9,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.databinding.ActivityMainBinding
-import kirillrychkov.foodscanner_client.databinding.FragmentRegisterBinding
-import kirillrychkov.foodscanner_client.presentation.presentation.auth.AuthActivity
-import kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseRestrictionsActivity
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null

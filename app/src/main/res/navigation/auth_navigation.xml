@@ -11,12 +11,30 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_loginFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
+            android:id="@+id/action_loginFragment_to_chooseDietsFragment"
+            app:destination="@id/chooseDietsFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
         android:name="kirillrychkov.foodscanner_client.presentation.presentation.auth.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" />
+    <fragment
+        android:id="@+id/chooseDietsFragment"
+        android:name="kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseDietsFragment"
+        android:label="fragment_choose_diets"
+        tools:layout="@layout/fragment_choose_diets" >
+        <action
+            android:id="@+id/action_chooseDietsFragment_to_chooseAllergensFragment"
+            app:destination="@id/chooseAllergensFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseAllergensFragment"
+        android:name="kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseAllergensFragment"
+        android:label="fragment_choose_allergens"
+        tools:layout="@layout/fragment_choose_allergens" >
+        <action
+            android:id="@+id/action_chooseAllergensFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+    </fragment>
 </navigation>

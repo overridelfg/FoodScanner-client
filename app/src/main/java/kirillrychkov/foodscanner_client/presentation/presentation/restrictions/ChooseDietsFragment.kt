@@ -84,8 +84,6 @@ class ChooseDietsFragment : Fragment() {
     private fun launchChooseAllergensFragment(){
         binding.nextButton.setOnClickListener {
             Log.d("Diets", selectedDiets.toString())
-            val intent = MainActivity.newIntentMainActivity(requireContext())
-            startActivity(intent)
             findNavController().navigate(R.id.action_chooseDietsFragment_to_chooseAllergensFragment)
         }
     }

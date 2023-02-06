@@ -3,6 +3,7 @@ package kirillrychkov.foodscanner_client.presentation.presentation
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.presentation.domain.repository.AuthRepository
 import kirillrychkov.foodscanner_client.presentation.presentation.auth.AuthActivity

@@ -5,5 +5,7 @@ data class UserDTO(
     val username: String,
     val email: String,
     val password: String,
+    val diets: List<DietDTO>,
+    val allergens: List<AllergenDTO>
 ) {
 }

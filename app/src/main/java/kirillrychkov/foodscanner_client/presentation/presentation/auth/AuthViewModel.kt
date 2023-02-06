@@ -49,19 +49,19 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun register(email: String, password: String, username: String) {
-        val fieldValid = validateRegisterInput(email, password, username)
-        if (fieldValid) {
-            viewModelScope.launch {
-                _loginResult.value = ViewState.loading()
-                val result = registerUserCase.invoke(email, password, username)
-                _loginResult.value = when (result) {
-                    is OperationResult.Error -> ViewState.error(result.data)
-                    is OperationResult.Success -> ViewState.success(result.data)
-                }
-            }
-        }
-    }
+//    fun register(email: String, password: String, username: String) {
+//        val fieldValid = validateRegisterInput(email, password, username)
+//        if (fieldValid) {
+//            viewModelScope.launch {
+//                _loginResult.value = ViewState.loading()
+//                val result = registerUserCase.invoke(email, password, username)
+//                _loginResult.value = when (result) {
+//                    is OperationResult.Error -> ViewState.error(result.data)
+//                    is OperationResult.Success -> ViewState.success(result.data)
+//                }
+//            }
+//        }
+//    }
 
     private fun validateLoginInput(email: String, password: String): Boolean {
         val emailValid = validateEmailInput(email)

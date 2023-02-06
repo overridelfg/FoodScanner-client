@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.databinding.FragmentChooseAllergensBinding
 import kirillrychkov.foodscanner_client.presentation.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.presentation.presentation.ViewModelFactory
@@ -48,6 +50,9 @@ class ChooseAllergensFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         subscribeDietsList()
         setupRecyclerView()
+        binding.nextButton.setOnClickListener {
+            findNavController().navigate(R.id.action_chooseAllergensFragment_to_registerFragment)
+        }
         viewModel.getAllergensList()
     }
 
