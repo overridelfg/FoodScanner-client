@@ -9,5 +9,5 @@
     android:layout_height="match_parent"
     app:defaultNavHost="true"
     app:navGraph="@navigation/auth_navigation"
-    tools:context=".presentation.presentation.auth.AuthActivity" />
+    tools:context=".app.presentation.auth.AuthActivity" />
 

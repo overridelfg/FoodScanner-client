@@ -7,7 +7,7 @@
     <uses-feature android:name="android.hardware.camera.level.full" />
 
     <application
-        android:name=".presentation.presentation.FoodScannerApp"
+        android:name=".app.presentation.FoodScannerApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,7 +18,7 @@
         android:theme="@style/Theme.FoodScannerclient"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.presentation.SplashActivity"
+            android:name=".app.presentation.SplashActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
@@ -30,14 +30,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.presentation.restrictions.ChooseRestrictionsActivity"
+            android:name=".app.presentation.restrictions.ChooseRestrictionsActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".presentation.presentation.auth.AuthActivity"
+            android:name=".app.presentation.auth.AuthActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -45,7 +45,7 @@
 
         </activity>
         <activity
-            android:name=".presentation.presentation.MainActivity"
+            android:name=".app.presentation.MainActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

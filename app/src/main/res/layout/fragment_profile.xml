@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1B1B1B"
-    tools:context=".presentation.presentation.mainpage.profile.ProfileFragment">
+    tools:context=".app.presentation.mainpage.profile.ProfileFragment">
 
     <TextView
         android:id="@+id/tv_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Username"
+        android:text="@string/username_hint"
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,33 +23,36 @@
         android:id="@+id/tv_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Email"
+        android:text="@string/email_hint"
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_username" />
 
-    <TextView
-        android:id="@+id/tv_diets"
-        android:layout_width="match_parent"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout_profile"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Diets"
-        android:textColor="@color/white"
-        android:textSize="25sp"
+        android:background="@color/main_grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_email" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_email"
+        app:tabIndicatorColor="@color/main_blue"
+        app:tabIndicatorHeight="2dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/main_blue"
+        app:tabTextColor="@color/white" />
 
-    <TextView
-        android:id="@+id/tv_allergens"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Allergens"
-        android:textColor="@color/white"
-        android:textSize="25sp"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager_profile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_diets" />
+        app:layout_constraintTop_toBottomOf="@id/tab_layout_profile" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

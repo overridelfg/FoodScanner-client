@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="kirillrychkov.foodscanner_client.presentation.presentation.auth.LoginFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.auth.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -16,21 +16,28 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="kirillrychkov.foodscanner_client.presentation.presentation.auth.RegisterFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.auth.RegisterFragment"
         android:label="fragment_register"
-        tools:layout="@layout/fragment_register" />
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
     <fragment
         android:id="@+id/chooseDietsFragment"
-        android:name="kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseDietsFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.restrictions.ChooseDietsFragment"
         android:label="fragment_choose_diets"
         tools:layout="@layout/fragment_choose_diets" >
         <action
             android:id="@+id/action_chooseDietsFragment_to_chooseAllergensFragment"
             app:destination="@id/chooseAllergensFragment" />
+        <action
+            android:id="@+id/action_chooseDietsFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/chooseAllergensFragment"
-        android:name="kirillrychkov.foodscanner_client.presentation.presentation.restrictions.ChooseAllergensFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.restrictions.ChooseAllergensFragment"
         android:label="fragment_choose_allergens"
         tools:layout="@layout/fragment_choose_allergens" >
         <action
