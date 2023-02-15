@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import kirillrychkov.foodscanner_client.app.domain.OperationResult
 import kirillrychkov.foodscanner_client.app.domain.entity.Allergen
 import kirillrychkov.foodscanner_client.app.domain.entity.Diet
+import kirillrychkov.foodscanner_client.app.domain.entity.User
 import kirillrychkov.foodscanner_client.app.domain.usecase.auth.LoginUseCase
 import kirillrychkov.foodscanner_client.app.domain.usecase.auth.RegisterUseCase
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
@@ -15,12 +16,12 @@ class AuthViewModel @Inject constructor(
     private val registerUserCase: RegisterUseCase
 ) : ViewModel() {
 
-    private val _loginResult = MutableLiveData<ViewState<Unit, String?>>()
-    val loginResult: LiveData<ViewState<Unit, String?>>
+    private val _loginResult = MutableLiveData<ViewState<User, String?>>()
+    val loginResult: LiveData<ViewState<User, String?>>
     get() = _loginResult
 
-    private val _registerResult = MutableLiveData<ViewState<Unit, String?>>()
-    val registerResult : LiveData<ViewState<Unit, String?>>
+    private val _registerResult = MutableLiveData<ViewState<User, String?>>()
+    val registerResult : LiveData<ViewState<User, String?>>
         get() = _registerResult
 
     private val _errorInputEmail = MutableLiveData<AuthFormErrorState>()
@@ -52,15 +53,15 @@ class AuthViewModel @Inject constructor(
     fun register(
         email: String,
         password: String,
-        username: String,
+        name: String,
         diets: List<Diet>,
         allergens: List<Allergen>
     ) {
-        val fieldValid = validateRegisterInput(email, password, username)
+        val fieldValid = validateRegisterInput(email, password, name)
         if (fieldValid) {
             viewModelScope.launch {
                 _registerResult.value = ViewState.loading()
-                val result = registerUserCase.invoke(email, password, username, diets, allergens)
+                val result = registerUserCase.invoke(email, password, name, diets, allergens)
                 _registerResult.value = when (result) {
                     is OperationResult.Error -> ViewState.error(result.data)
                     is OperationResult.Success -> ViewState.success(result.data)

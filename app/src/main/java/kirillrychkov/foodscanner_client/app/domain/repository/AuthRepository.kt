@@ -6,15 +6,15 @@ import kirillrychkov.foodscanner_client.app.domain.entity.Diet
 import kirillrychkov.foodscanner_client.app.domain.entity.User
 
 interface AuthRepository {
-    fun login(email: String, password: String): OperationResult<Unit, String?>
+    suspend fun login(email: String, password: String): OperationResult<User, String?>
 
-    fun register(
-        username: String,
+    suspend fun register(
         email: String,
         password: String,
+        name: String,
         diets: List<Diet>,
         allergens: List<Allergen>
-    ): OperationResult<Unit, String?>
+    ): OperationResult<User, String?>
 
     fun logout()
 

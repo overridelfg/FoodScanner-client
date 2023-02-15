@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,7 +84,7 @@ class RegisterFragment : Fragment() {
                 }
                 is ViewState.Error -> {
                     binding.pbRegister.isVisible = false
-//                    showError(it.result ?: "Unknown login error")
+                    Log.d("AAAAA",it.result ?: "Unknown login error")
                 }
                 is ViewState.Success -> {
                     binding.pbRegister.isVisible = false

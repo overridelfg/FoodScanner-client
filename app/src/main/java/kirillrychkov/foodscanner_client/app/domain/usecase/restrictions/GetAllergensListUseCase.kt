@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetAllergensListUseCase @Inject constructor(
     private val repository: ChooseRestrictionsRepository
 ) {
-    operator fun invoke(): OperationResult<List<Allergen>, String?> {
+    suspend operator fun invoke(): OperationResult<List<Allergen>, String?> {
         return repository.getAllergens()
     }
 }

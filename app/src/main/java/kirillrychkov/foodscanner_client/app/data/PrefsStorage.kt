@@ -15,16 +15,15 @@ class PrefsStorage @Inject constructor(
     )
 
     fun getUser() : User?{
-        val id = sharedPreferences.getLong(ID_KEY, -1)
+        val id = sharedPreferences.getString(ID_KEY, null)
         val email = sharedPreferences.getString(EMAIL_KEY, null)
-        val username = sharedPreferences.getString(USERNAME_KEY, null)
-        val password = sharedPreferences.getString(PASSWORD_KEY, null)
+        val name = sharedPreferences.getString(USERNAME_KEY, null)
         val token = sharedPreferences.getString(TOKEN_KEY, null)
         val diets = sharedPreferences.getString(DIETS_KEY, null)
         val allergens = sharedPreferences.getString(ALLERGENS_KEY, null)
-        if(id != -1L && !email.isNullOrBlank() && !username.isNullOrBlank()
-            && !token.isNullOrBlank() && !password.isNullOrBlank()
-            && !diets.isNullOrBlank() && !allergens.isNullOrBlank()){
+        if(!id.isNullOrBlank() && !email.isNullOrBlank() && !name.isNullOrBlank()
+            && !token.isNullOrBlank() && !diets.isNullOrBlank()
+            && !allergens.isNullOrBlank()){
 
             val listOfDietsString = diets.split(":")
             val listOfAllergensString = allergens.split(":")
@@ -35,8 +34,7 @@ class PrefsStorage @Inject constructor(
             return User(
                 id = id,
                 email = email,
-                username = username,
-                password = password,
+                name = name,
                 token = token,
                 diets = listOfDiets,
                 allergens = listOfAllergens
@@ -50,9 +48,8 @@ class PrefsStorage @Inject constructor(
         val allergens = getListOfAllergens()
         if(user != null && diets != null && allergens != null){
             sharedPreferences.edit()
-                .putLong(ID_KEY, user.id)
-                .putString(PASSWORD_KEY, user.password)
-                .putString(USERNAME_KEY, user.username)
+                .putString(ID_KEY, user.id)
+                .putString(USERNAME_KEY, user.name)
                 .putString(EMAIL_KEY, user.email)
                 .putString(TOKEN_KEY, user.token)
                 .putString(DIETS_KEY, encodeDietsList(diets))
@@ -61,7 +58,6 @@ class PrefsStorage @Inject constructor(
         }else{
             sharedPreferences.edit()
                 .remove(ID_KEY)
-                .remove(PASSWORD_KEY)
                 .remove(USERNAME_KEY)
                 .remove(EMAIL_KEY)
                 .remove(TOKEN_KEY)
@@ -182,7 +178,6 @@ class PrefsStorage @Inject constructor(
         private const val ID_KEY = "id"
         private const val USERNAME_KEY = "username"
         private const val EMAIL_KEY = "email"
-        private const val PASSWORD_KEY = "password"
         private const val TOKEN_KEY = "token"
         private const val DIETS_KEY = "diets"
         private const val ALLERGENS_KEY = "allergens"

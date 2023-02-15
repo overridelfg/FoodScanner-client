@@ -1,10 +1,9 @@
 package kirillrychkov.foodscanner_client.app.domain.entity
 
 data class User(
-    val id: Long,
-    val username: String,
+    val id: String,
     val email: String,
-    val password: String,
+    val name: String,
     val token: String,
     val diets: List<Diet>,
     val allergens: List<Allergen>

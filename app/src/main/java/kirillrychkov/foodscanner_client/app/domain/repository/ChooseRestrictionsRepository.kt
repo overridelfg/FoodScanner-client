@@ -8,7 +8,7 @@ import kirillrychkov.foodscanner_client.app.domain.entity.Ingredient
 interface ChooseRestrictionsRepository {
     suspend fun getDiets(): OperationResult<List<Diet>, String?>
 
-    fun getAllergens(): OperationResult<List<Allergen>, String?>
+    suspend fun getAllergens(): OperationResult<List<Allergen>, String?>
 
     fun getIngredients(): OperationResult<List<Ingredient>, String?>
 

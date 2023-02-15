@@ -1,33 +1,34 @@
 package kirillrychkov.foodscanner_client.app.data.network
 
 import kirillrychkov.foodscanner_client.app.data.network.models.*
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
 
 
 interface ServerAPI {
-//    @POST("login")
+    @POST("auth/login")
     suspend fun login(
-        loginRequestDTO: LoginRequestDTO
+        @Body loginRequestDTO: LoginRequestDTO
     ) : LoginResponseDTO
 
-//    @POST("register")
+    @POST("auth/register")
     suspend fun register(
-        registerRequestDTO: RegisterRequestDTO
+        @Body registerRequestDTO: RegisterRequestDTO
     ) : LoginResponseDTO
 
     @GET("restrictions/diets")
     suspend fun getDiets(
-
     ) : List<DietDTO>
 
-//    @GET("restrictions/allergens")
+    @GET("restrictions/allergens")
     suspend fun getAllergens(
-
     ) : List<AllergenDTO>
 
-//    @GET("restrictions/userRestrictions")
+    @GET("restrictions/userRestrictions")
     suspend fun getUserRestrictions(
-        userId: Int
+        @Header("Authorization") token: String
     ): UserRestrictionsDTO
 
 //    @POST("restrictions/postUserRestrictions")
