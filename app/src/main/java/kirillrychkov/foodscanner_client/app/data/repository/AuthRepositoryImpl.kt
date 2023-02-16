@@ -2,7 +2,7 @@ package kirillrychkov.foodscanner_client.app.data.repository
 
 import android.util.Log
 import kirillrychkov.foodscanner_client.app.data.PrefsStorage
-import kirillrychkov.foodscanner_client.app.data.network.ApiProvider
+import kirillrychkov.foodscanner_client.app.data.network.ServerAPI
 import kirillrychkov.foodscanner_client.app.data.network.models.*
 import kirillrychkov.foodscanner_client.app.domain.OperationResult
 import kirillrychkov.foodscanner_client.app.domain.entity.Allergen
@@ -14,10 +14,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val prefsStorage: PrefsStorage
+    private val prefsStorage: PrefsStorage,
+    private val apiService: ServerAPI
 ) : AuthRepository {
-
-    private val apiService =  ApiProvider().apiService
 
     override suspend fun login(email: String, password: String): OperationResult<User, String?> {
         return withContext(Dispatchers.IO) {
@@ -88,7 +87,6 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun getUser(): User? {
-        Log.d("AA", prefsStorage.getUser().toString())
-        return null
+        return prefsStorage.getUser()
     }
 }

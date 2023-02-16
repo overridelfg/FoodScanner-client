@@ -44,16 +44,14 @@ class PrefsStorage @Inject constructor(
     }
 
     fun saveToSharedPreferences(user: User?){
-        val diets = getListOfDiets()
-        val allergens = getListOfAllergens()
-        if(user != null && diets != null && allergens != null){
+        if(user != null){
             sharedPreferences.edit()
                 .putString(ID_KEY, user.id)
                 .putString(USERNAME_KEY, user.name)
                 .putString(EMAIL_KEY, user.email)
                 .putString(TOKEN_KEY, user.token)
-                .putString(DIETS_KEY, encodeDietsList(diets))
-                .putString(ALLERGENS_KEY, encodeAllergensList(allergens))
+                .putString(DIETS_KEY, encodeDietsList(user.diets))
+                .putString(ALLERGENS_KEY, encodeAllergensList(user.allergens))
                 .apply()
         }else{
             sharedPreferences.edit()

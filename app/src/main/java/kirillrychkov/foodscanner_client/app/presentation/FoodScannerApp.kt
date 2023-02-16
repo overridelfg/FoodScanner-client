@@ -1,6 +1,7 @@
 package kirillrychkov.foodscanner_client.app.presentation
 
 import android.app.Application
+import kirillrychkov.foodscanner_client.BuildConfig
 import kirillrychkov.foodscanner_client.app.di.AppComponent
 import kirillrychkov.foodscanner_client.app.di.DaggerAppComponent
 

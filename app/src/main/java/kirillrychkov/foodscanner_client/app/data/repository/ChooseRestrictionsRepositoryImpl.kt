@@ -2,7 +2,7 @@ package kirillrychkov.foodscanner_client.app.data.repository
 
 import android.util.Log
 import kirillrychkov.foodscanner_client.app.data.PrefsStorage
-import kirillrychkov.foodscanner_client.app.data.network.ApiProvider
+import kirillrychkov.foodscanner_client.app.data.network.ServerAPI
 import kirillrychkov.foodscanner_client.app.data.network.models.toAllergen
 import kirillrychkov.foodscanner_client.app.data.network.models.toDiet
 import kirillrychkov.foodscanner_client.app.domain.OperationResult
@@ -15,10 +15,10 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ChooseRestrictionsRepositoryImpl @Inject constructor(
-    private val prefsStorage: PrefsStorage
+    private val prefsStorage: PrefsStorage,
+    private val apiService: ServerAPI
 ): ChooseRestrictionsRepository {
 
-    private val apiService =  ApiProvider().apiService
 
     override suspend fun getDiets(): OperationResult<List<Diet>, String?> {
         return withContext(Dispatchers.IO){
