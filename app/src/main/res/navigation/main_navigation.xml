@@ -15,4 +15,9 @@
         android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/productsListFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListFragment"
+        android:label="fragment_products_list"
+        tools:layout="@layout/fragment_products_list" />
 </navigation>

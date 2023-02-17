@@ -19,4 +19,7 @@
     <string name="profile">Profile</string>
     <string name="scan">Scan</string>
     <string name="log_out">Выйти</string>
+    <string name="products_bottom_navigation_title">Продукты</string>
+    <string name="profile_bottom_navigation_title">Профиль</string>
+    <string name="scan_bottom_navigation_title">Скан</string>
 </resources>

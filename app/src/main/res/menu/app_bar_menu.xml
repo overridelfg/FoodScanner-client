@@ -2,13 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/barcodeScannerFragment"
-        android:icon="@drawable/icon_lock"
+        android:icon="@drawable/ic_scan"
         android:enabled="true"
-        android:title="@string/scan"/>
+        android:title="@string/scan_bottom_navigation_title"/>
+
+    <item
+        android:id="@+id/productsListFragment"
+        android:icon="@drawable/icon_food"
+        android:enabled="true"
+        android:title="@string/products_bottom_navigation_title"/>
 
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/icon_person"
         android:enabled="true"
-        android:title="@string/profile"/>
+        android:title="@string/profile_bottom_navigation_title"/>
+
 </menu>
