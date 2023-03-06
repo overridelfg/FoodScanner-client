@@ -3,10 +3,12 @@ package kirillrychkov.foodscanner_client.app.di
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
+import kirillrychkov.foodscanner_client.app.domain.repository.ProductsRepository
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.SplashActivity
 import kirillrychkov.foodscanner_client.app.presentation.auth.LoginFragment
 import kirillrychkov.foodscanner_client.app.presentation.auth.RegisterFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeScannerFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.AllergensListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.DietsListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.ProfileFragment
@@ -32,6 +34,10 @@ interface AppComponent{
     fun inject(chooseDietsFragment: ChooseDietsFragment)
 
     fun inject(chooseAllergensFragment: ChooseAllergensFragment)
+
+    fun inject(productsRepository: ProductsRepository)
+
+    fun inject(barcodeScannerFragment: BarcodeScannerFragment)
 
     fun inject(profileFragment: ProfileFragment)
 

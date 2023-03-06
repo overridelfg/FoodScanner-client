@@ -1,12 +1,33 @@
 package kirillrychkov.foodscanner_client.app.data.network.models
 
+import kirillrychkov.foodscanner_client.app.domain.entity.Product
+
 data class ProductDTO(
     val id: Long,
-    val title: String,
-    val ingredients: List<String>,
-    val image: String,
-    val barcode: String,
-    val isProductAllowed: Boolean,
-    val allergenStatements: List<String>
-) {
+    val Name: String,
+    val Barcode: Long,
+    val Description: String,
+    val Proteins: String,
+    val Fats: String,
+    val Carbohydrates: String,
+    val Kcal: String,
+    val Kj: Int,
+    val Weight: String,
+    val Jpg: String
+)
+
+fun ProductDTO.toProduct(): Product {
+    return Product(
+        id,
+        Name,
+        Barcode,
+        Description,
+        Proteins,
+        Fats,
+        Carbohydrates,
+        Kcal,
+        Kj,
+        Weight,
+        Jpg
+    )
 }

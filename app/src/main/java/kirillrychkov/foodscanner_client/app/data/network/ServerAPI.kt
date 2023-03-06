@@ -5,6 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 
 interface ServerAPI {
@@ -25,6 +26,11 @@ interface ServerAPI {
     @GET("restrictions/allergens")
     suspend fun getAllergens(
     ) : List<AllergenDTO>
+
+    @GET("products/details/{barcode}")
+    suspend fun getProductDetails(
+        @Path("barcode") barcode: Long
+    ) : ProductDTO
 
     @GET("restrictions/userRestrictions")
     suspend fun getUserRestrictions(

@@ -4,8 +4,10 @@ import dagger.Binds
 import dagger.Module
 import kirillrychkov.foodscanner_client.app.data.repository.AuthRepositoryImpl
 import kirillrychkov.foodscanner_client.app.data.repository.ChooseRestrictionsRepositoryImpl
+import kirillrychkov.foodscanner_client.app.data.repository.ProductsRepositoryImpl
 import kirillrychkov.foodscanner_client.app.domain.repository.AuthRepository
 import kirillrychkov.foodscanner_client.app.domain.repository.ChooseRestrictionsRepository
+import kirillrychkov.foodscanner_client.app.domain.repository.ProductsRepository
 import javax.inject.Singleton
 
 @Module
@@ -18,4 +20,8 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindChooseRestrictionsRepository(impl: ChooseRestrictionsRepositoryImpl) : ChooseRestrictionsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProductsRepository(impl: ProductsRepositoryImpl): ProductsRepository
 }

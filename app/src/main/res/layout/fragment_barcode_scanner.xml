@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1B1B1B"
     tools:context=".app.presentation.mainpage.barcodescan.BarcodeScannerFragment">
 
-       
-       <androidx.camera.view.PreviewView
-           android:id="@+id/pv_camera"
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"/>
 
-        <Button
-            android:id="@+id/btn_save"
-            android:text="Save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:layout_gravity="bottom|center_horizontal"/>
+    <androidx.camera.view.PreviewView
+        android:id="@+id/pv_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginVertical="40dp"
+        android:backgroundTint="#1B1B1B" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="60dp"
+        android:background="@drawable/background_camera_boarders" />
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/bottom_sheet"
+            layout="@layout/bottom_sheet_product_details"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 </FrameLayout>
