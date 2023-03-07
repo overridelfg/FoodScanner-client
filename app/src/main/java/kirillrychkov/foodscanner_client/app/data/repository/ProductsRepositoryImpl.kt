@@ -24,4 +24,17 @@ class ProductsRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun getProducts(): OperationResult<List<Product>, String?> {
+        return withContext(Dispatchers.IO){
+            try{
+                val result = apiService.getProducts().map{
+                    it.toProduct()
+                }
+                return@withContext OperationResult.Success(result)
+            }catch (e: Exception){
+                return@withContext OperationResult.Error(e.message)
+            }
+        }
+    }
 }

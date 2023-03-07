@@ -32,13 +32,7 @@ interface ServerAPI {
         @Path("barcode") barcode: Long
     ) : ProductDTO
 
-    @GET("restrictions/userRestrictions")
-    suspend fun getUserRestrictions(
-        @Header("Authorization") token: String
-    ): UserRestrictionsDTO
-
-//    @POST("restrictions/postUserRestrictions")
-    suspend fun postUserRestrictions(
-        userRestrictionsDTO: UserRestrictionsDTO
-    ): UserRestrictionsDTO
+    @GET("products/list")
+    suspend fun getProducts(
+    ): List<ProductDTO>
 }

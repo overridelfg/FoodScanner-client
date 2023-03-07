@@ -9,6 +9,7 @@ import kirillrychkov.foodscanner_client.app.presentation.SplashActivity
 import kirillrychkov.foodscanner_client.app.presentation.auth.LoginFragment
 import kirillrychkov.foodscanner_client.app.presentation.auth.RegisterFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeScannerFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.AllergensListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.DietsListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.ProfileFragment
@@ -35,7 +36,7 @@ interface AppComponent{
 
     fun inject(chooseAllergensFragment: ChooseAllergensFragment)
 
-    fun inject(productsRepository: ProductsRepository)
+    fun inject(productsListFragment: ProductsListFragment)
 
     fun inject(barcodeScannerFragment: BarcodeScannerFragment)
 
@@ -44,6 +45,8 @@ interface AppComponent{
     fun inject(dietsListFragment: DietsListFragment)
 
     fun inject(allergensListFragment: AllergensListFragment)
+
+
 
     @Component.Builder
     interface Builder {

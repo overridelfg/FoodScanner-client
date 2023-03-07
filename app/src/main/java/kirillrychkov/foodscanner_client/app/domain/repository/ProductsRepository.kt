@@ -5,4 +5,6 @@ import kirillrychkov.foodscanner_client.app.domain.entity.Product
 
 interface ProductsRepository {
     suspend fun getProductDetails(barcode: Long): OperationResult<Product, String?>
+
+    suspend fun getProducts() : OperationResult<List<Product>, String?>
 }

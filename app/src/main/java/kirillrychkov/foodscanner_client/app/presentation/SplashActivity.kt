@@ -30,9 +30,9 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_splash)
-        val intent = MainActivity.newIntentMainActivity(this)
-        startActivity(intent)
-        finish()
+//        val intent = MainActivity.newIntentMainActivity(this)
+//        startActivity(intent)
+//        finish()
         if(savedInstanceState == null){
             if(authRepository.getUser() == null){
                 chooseRestrictionsRepository.removeSelectedRestrictions()
