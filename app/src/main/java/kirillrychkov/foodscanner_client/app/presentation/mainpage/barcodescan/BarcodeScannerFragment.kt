@@ -17,6 +17,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -76,7 +77,7 @@ class BarcodeScannerFragment : Fragment() {
         mBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         Log.d(TAG, bottomSheetRoot.isVisible.toString())
         subscribeGetProductDetails()
-        val barcode : Long = 1095906911382
+        val barcode : Long = 4600778000767
         viewModel.getProductDetails(barcode)
         if(allPermissionGranted()){
             startCamera()
@@ -94,13 +95,14 @@ class BarcodeScannerFragment : Fragment() {
                     val productWeight = product.Weight.replace("\\s".toRegex(), "")
                     binding.bottomSheet.tvProductTitle.text = product.Name + " " + productWeight
                     binding.bottomSheet.tvProductIngredients.text =
-                        binding.bottomSheet.tvProductIngredients.text.toString() + " " + product.Description
+                        "Ингредиенты:" + " " + product.Description
                     binding.bottomSheet.tvProteins.text =
-                        binding.bottomSheet.tvProteins.text.toString() + "\n" + product.Proteins
+                        "Белки: " + "\n" + product.Proteins
                     binding.bottomSheet.tvFats.text =
-                        binding.bottomSheet.tvFats.text.toString() + "\n" + product.Fats
+                        "Жиры" + "\n" + product.Fats
                     binding.bottomSheet.tvCarbohydrates.text =
-                        binding.bottomSheet.tvCarbohydrates.text.toString() + "\n" + product.Carbohydrates
+                        "Углеводы" + "\n" + product.Carbohydrates
+                    Glide.with(requireContext()).load(product.Jpg).into(binding.bottomSheet.ivProductImg)
                 }
                 is ViewState.Error -> {
                     Log.d(TAG, it.toString())
