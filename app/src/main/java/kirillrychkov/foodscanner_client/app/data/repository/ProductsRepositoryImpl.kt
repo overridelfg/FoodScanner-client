@@ -19,7 +19,8 @@ class ProductsRepositoryImpl @Inject constructor(
             try{
                 val result = apiService.getProductDetails(barcode).toProduct()
                 return@withContext OperationResult.Success(result)
-            }catch (e: Exception){
+            }
+            catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)
             }
         }

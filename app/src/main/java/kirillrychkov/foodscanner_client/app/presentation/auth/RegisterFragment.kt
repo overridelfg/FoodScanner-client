@@ -15,6 +15,7 @@ import kirillrychkov.foodscanner_client.app.domain.repository.ChooseRestrictions
 import kirillrychkov.foodscanner_client.databinding.FragmentRegisterBinding
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.presentation.MainActivity
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
@@ -84,7 +85,11 @@ class RegisterFragment : Fragment() {
                 }
                 is ViewState.Error -> {
                     binding.pbRegister.isVisible = false
-                    Log.d("AAAAA",it.result ?: "Unknown login error")
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
                 is ViewState.Success -> {
                     binding.pbRegister.isVisible = false

@@ -1,6 +1,7 @@
 package kirillrychkov.foodscanner_client.app.data.network
 
 import kirillrychkov.foodscanner_client.app.data.network.models.*
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -12,12 +13,12 @@ interface ServerAPI {
     @POST("auth/login")
     suspend fun login(
         @Body loginRequestDTO: LoginRequestDTO
-    ) : LoginResponseDTO
+    ) : Response<LoginResponseDTO>
 
     @POST("auth/register")
     suspend fun register(
         @Body registerRequestDTO: RegisterRequestDTO
-    ) : LoginResponseDTO
+    ) : Response<LoginResponseDTO>
 
     @GET("restrictions/diets")
     suspend fun getDiets(

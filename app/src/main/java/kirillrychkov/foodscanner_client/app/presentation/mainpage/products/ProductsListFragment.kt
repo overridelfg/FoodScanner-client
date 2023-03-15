@@ -8,10 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
+import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.domain.entity.Product
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
@@ -53,7 +57,6 @@ class ProductsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
         viewModel.getProducts()
         subscribeGetProductsList()
@@ -63,11 +66,20 @@ class ProductsListFragment : Fragment() {
         viewModel.productsList.observe(viewLifecycleOwner){
             when (it) {
                 is ViewState.Success -> {
+                    binding.pbProductList.isVisible = false
                     adapter.productsList = it.result
                 }
-                is ViewState.Loading -> ""
+                is ViewState.Loading -> {
+                    binding.pbProductList.isVisible = true
+                }
                 is ViewState.Error -> {
-                    "err"
+                    binding.pbProductList.isVisible = false
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).setAction("OK") {
+                    }.show()
                 }
             }
         }
@@ -81,26 +93,39 @@ class ProductsListFragment : Fragment() {
             val bottomSheetRoot = binding.bottomSheet.bottomSheetRoot
             val mBottomBehavior =
                 BottomSheetBehavior.from(bottomSheetRoot)
-            mBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             bottomSheetRoot.visibility = View.VISIBLE
-            val product = it
-            val productWeight = product.Weight.replace("\\s".toRegex(), "")
-            binding.bottomSheet.tvProductTitle.text = product.Name + " " + productWeight
-            binding.bottomSheet.tvProductIngredients.text =
-                "Ингредиенты:" + " " + product.Description
-            binding.bottomSheet.tvProteins.text =
-                "Белки: " + "\n" + product.Proteins
-            binding.bottomSheet.tvFats.text =
-                "Жиры" + "\n" + product.Fats
-            binding.bottomSheet.tvCarbohydrates.text =
-                "Углеводы" + "\n" + product.Carbohydrates
+            bindProductListUI(it)
+        }
+        rvProductsList.adapter = adapter
+    }
+
+    private fun bindProductListUI(product: Product){
+        val productWeight = product.Weight.replace("\\s".toRegex(), "")
+        binding.bottomSheet.tvProductTitle.text = product.Name + " " + productWeight
+        binding.bottomSheet.tvProductIngredients.text =
+            "Ингредиенты:" + " " + product.Description
+        binding.bottomSheet.tvProteins.text =
+            "Белки: " + "\n" + product.Proteins
+        binding.bottomSheet.tvFats.text =
+            "Жиры" + "\n" + product.Fats
+        binding.bottomSheet.tvCarbohydrates.text =
+            "Углеводы" + "\n" + product.Carbohydrates
+        if(product.Jpg.isBlank()){
+            Picasso.get().load(R.drawable.nopictures).into(binding.bottomSheet.ivProductImg);
+        }else{
             try{
-                Glide.with(requireContext()).load(product.Jpg).into(binding.bottomSheet.ivProductImg)
-            }catch(e: Exception) {
-                Log.d("FoodEx", e.message.toString())
+                Picasso.get().isLoggingEnabled = true
+                Picasso.get().load(product.Jpg)
+                    .placeholder(R.color.white)
+                    .error(R.drawable.nopictures)
+                    .fit()
+                    .centerInside().
+                    into(binding.bottomSheet.ivProductImg);
+            }catch (e: Exception){
+                Picasso.get().load(R.drawable.nopictures).into(binding.bottomSheet.ivProductImg)
             }
 
         }
-        rvProductsList.adapter = adapter
     }
 }

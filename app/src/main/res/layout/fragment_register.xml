@@ -4,8 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#4885ED"
+    android:background="@color/main_blue"
     tools:context=".app.presentation.auth.RegisterFragment">
+
+
+    <TextView
+        android:id="@+id/app_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/open_sans_bold"
+        android:text="Foodie"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </TextView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_login"
@@ -166,6 +184,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:visibility="gone"
+        android:indeterminateTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -9,5 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="main_grey">#1B1B1B</color>
     <color name="main_blue">#4885ed</color>
+    <color name="grey">#282828</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override = "true">#FFFFFFFF</color>
 </resources>

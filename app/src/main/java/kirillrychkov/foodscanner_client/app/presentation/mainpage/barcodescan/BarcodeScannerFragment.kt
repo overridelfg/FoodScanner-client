@@ -23,6 +23,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import kirillrychkov.foodscanner_client.app.domain.entity.Product
 import kirillrychkov.foodscanner_client.app.domain.repository.ProductsRepository
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
@@ -74,8 +75,7 @@ class BarcodeScannerFragment : Fragment() {
         bottomSheetRoot.visibility = View.VISIBLE
         val mBottomBehavior =
             BottomSheetBehavior.from(bottomSheetRoot)
-        mBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-        Log.d(TAG, bottomSheetRoot.isVisible.toString())
+        mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         subscribeGetProductDetails()
         val barcode : Long = 4600778000767
         viewModel.getProductDetails(barcode)
@@ -91,18 +91,7 @@ class BarcodeScannerFragment : Fragment() {
         viewModel.productDetails.observe(viewLifecycleOwner){
             when(it){
                 is ViewState.Success -> {
-                    val product = it.result
-                    val productWeight = product.Weight.replace("\\s".toRegex(), "")
-                    binding.bottomSheet.tvProductTitle.text = product.Name + " " + productWeight
-                    binding.bottomSheet.tvProductIngredients.text =
-                        "Ингредиенты:" + " " + product.Description
-                    binding.bottomSheet.tvProteins.text =
-                        "Белки: " + "\n" + product.Proteins
-                    binding.bottomSheet.tvFats.text =
-                        "Жиры" + "\n" + product.Fats
-                    binding.bottomSheet.tvCarbohydrates.text =
-                        "Углеводы" + "\n" + product.Carbohydrates
-                    Glide.with(requireContext()).load(product.Jpg).into(binding.bottomSheet.ivProductImg)
+                    bindProductData(it.result)
                 }
                 is ViewState.Error -> {
                     Log.d(TAG, it.toString())
@@ -117,6 +106,21 @@ class BarcodeScannerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         cameraExecutor.shutdown()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun bindProductData(product: Product){
+        val productWeight = product.Weight.replace("\\s".toRegex(), "")
+        binding.bottomSheet.tvProductTitle.text = product.Name + " " + productWeight
+        binding.bottomSheet.tvProductIngredients.text =
+            "Ингредиенты:" + " " + product.Description
+        binding.bottomSheet.tvProteins.text =
+            "Белки " + "\n" + product.Proteins
+        binding.bottomSheet.tvFats.text =
+            "Жиры" + "\n" + product.Fats
+        binding.bottomSheet.tvCarbohydrates.text =
+            "Углеводы" + "\n" + product.Carbohydrates
+        Glide.with(requireContext()).load(product.Jpg).into(binding.bottomSheet.ivProductImg)
     }
 
     private fun startCamera() {

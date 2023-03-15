@@ -23,7 +23,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
     </TextView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,10 +39,17 @@
             android:id="@+id/et_search_product"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_search"
             android:layout_marginHorizontal="15sp"
             android:background="@drawable/background_search_edittext"
             android:hint="Поиск..."
+            android:imeOptions="actionSearch"
+            android:inputType="text"
             android:maxLines="1"
+            android:focusable="false"
+            android:fontFamily="@font/open_sans_light"
+            android:textCursorDrawable="@color/white"
+            android:drawablePadding="10dp"
             android:paddingStart="15dp"
             android:paddingTop="14dp"
             android:paddingEnd="15dp"
@@ -70,17 +76,31 @@
             app:layout_constraintTop_toBottomOf="@id/et_search_product"
             tools:listitem="@layout/item_product_list" />
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/coordinatorLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent">
 
-            <include
-                android:id="@+id/bottom_sheet"
-                layout="@layout/bottom_sheet_product_details" />
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:id="@+id/coordinatorLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <include
+                    android:id="@+id/bottom_sheet"
+                    layout="@layout/bottom_sheet_product_details" />
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+
+        <ProgressBar
+            android:id="@+id/pb_product_list"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.databinding.FragmentLoginBinding
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
@@ -103,7 +104,11 @@ class LoginFragment : Fragment() {
                 }
                 is ViewState.Error -> {
                     binding.pbLogin.isVisible = false
-//                    showError(it.result ?: "Unknown login error")
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
                 is ViewState.Success -> {
                     binding.pbLogin.isVisible = true
