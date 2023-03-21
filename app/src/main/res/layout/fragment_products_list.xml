@@ -46,7 +46,6 @@
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:maxLines="1"
-            android:focusable="false"
             android:fontFamily="@font/open_sans_light"
             android:textCursorDrawable="@color/white"
             android:drawablePadding="10dp"

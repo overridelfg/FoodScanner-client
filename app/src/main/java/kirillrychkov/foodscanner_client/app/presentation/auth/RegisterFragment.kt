@@ -60,6 +60,10 @@ class RegisterFragment : Fragment() {
         subscribeError()
         subscribeRegisterResult()
         launchLoginFragment()
+        bindRegisterButton()
+    }
+
+    private fun bindRegisterButton(){
         binding.registerButton.setOnClickListener {
             val email = binding.emailEditText.text.toString()
             val username = binding.usernameEditText.text.toString()
@@ -102,10 +106,15 @@ class RegisterFragment : Fragment() {
 
     private fun subscribeError() {
         viewModel.errorInputEmail.observe(viewLifecycleOwner) {
-            val errorMessage = if (it == AuthFormErrorState.EMPTY_EMAIL) {
-                "Заполните поле Email"
-            } else
-                null
+            val errorMessage = when (it) {
+                AuthFormErrorState.EMPTY_EMAIL -> {
+                    "Заполните поле Email"
+                }
+                AuthFormErrorState.INVALID_EMAIL -> {
+                    "Неверная почта"
+                }
+                else -> null
+            }
             binding.emailContainer.error = errorMessage
         }
 

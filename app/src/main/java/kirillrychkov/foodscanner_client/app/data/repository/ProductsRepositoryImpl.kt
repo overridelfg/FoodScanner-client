@@ -38,4 +38,17 @@ class ProductsRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun getProductsBySearch(name: String): OperationResult<List<Product>, String?> {
+        return withContext(Dispatchers.IO){
+            try{
+                val result = apiService.getProductBySearch(name).map{
+                    it.toProduct()
+                }
+                return@withContext OperationResult.Success(result)
+            }catch (e: Exception){
+                return@withContext OperationResult.Error(e.message)
+            }
+        }
+    }
 }

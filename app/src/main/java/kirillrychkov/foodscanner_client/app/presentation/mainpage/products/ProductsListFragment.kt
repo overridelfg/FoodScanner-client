@@ -2,16 +2,16 @@ package kirillrychkov.foodscanner_client.app.presentation.mainpage.products
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
@@ -21,6 +21,9 @@ import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
 import kirillrychkov.foodscanner_client.databinding.FragmentProductsListBinding
+import kotlinx.coroutines.delay
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets.UTF_8
 import javax.inject.Inject
 
 
@@ -58,12 +61,38 @@ class ProductsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        subscribeGetProductsBySearch()
+        bindSearchButton()
+        setOnTextChange()
         viewModel.getProducts()
         subscribeGetProductsList()
     }
 
     private fun subscribeGetProductsList() {
         viewModel.productsList.observe(viewLifecycleOwner){
+            when (it) {
+                is ViewState.Success -> {
+                    binding.pbProductList.isVisible = false
+                    adapter.productsList = it.result
+                }
+                is ViewState.Loading -> {
+                    binding.pbProductList.isVisible = true
+                }
+                is ViewState.Error -> {
+                    binding.pbProductList.isVisible = false
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).setAction("OK") {
+                    }.show()
+                }
+            }
+        }
+    }
+
+    private fun subscribeGetProductsBySearch(){
+        viewModel.productsSearchList.observe(viewLifecycleOwner){
             when (it) {
                 is ViewState.Success -> {
                     binding.pbProductList.isVisible = false
@@ -95,12 +124,23 @@ class ProductsListFragment : Fragment() {
                 BottomSheetBehavior.from(bottomSheetRoot)
             mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             bottomSheetRoot.visibility = View.VISIBLE
-            bindProductListUI(it)
+            fillProductListUI(it)
         }
         rvProductsList.adapter = adapter
     }
 
-    private fun bindProductListUI(product: Product){
+    private fun bindSearchButton(){
+        binding.etSearchProduct.setOnEditorActionListener { view, actionId, keyEvent ->
+            if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                val data = binding.etSearchProduct.text.toString()
+                viewModel.getProductsBySearch(data)
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+    }
+
+    private fun fillProductListUI(product: Product){
         val productWeight = product.Weight.replace("\\s".toRegex(), "")
         binding.bottomSheet.tvProductTitle.text = product.Name + " " + productWeight
         binding.bottomSheet.tvProductIngredients.text =
@@ -125,7 +165,24 @@ class ProductsListFragment : Fragment() {
             }catch (e: Exception){
                 Picasso.get().load(R.drawable.nopictures).into(binding.bottomSheet.ivProductImg)
             }
-
         }
     }
+    private fun setOnTextChange() {
+        binding.etSearchProduct.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+//                viewModel.getProductsBySearch(binding.etSearchProduct.text.toString())
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+
+            }
+
+        })
+    }
+
 }

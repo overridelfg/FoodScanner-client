@@ -1,5 +1,6 @@
 package kirillrychkov.foodscanner_client.app.data.network
 
+import androidx.room.Query
 import kirillrychkov.foodscanner_client.app.data.network.models.*
 import retrofit2.Response
 import retrofit2.http.Body
@@ -35,5 +36,10 @@ interface ServerAPI {
 
     @GET("products/list")
     suspend fun getProducts(
+    ): List<ProductDTO>
+
+    @GET("products/search")
+    suspend fun getProductBySearch(
+        @retrofit2.http.Query("name") name: String
     ): List<ProductDTO>
 }

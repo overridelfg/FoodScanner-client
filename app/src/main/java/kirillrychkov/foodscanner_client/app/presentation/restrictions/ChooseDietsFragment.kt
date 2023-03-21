@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.databinding.FragmentChooseDietsBinding
 import kirillrychkov.foodscanner_client.app.domain.entity.Diet
@@ -69,12 +71,20 @@ class ChooseDietsFragment : Fragment() {
         viewModel.dietsList.observe(viewLifecycleOwner){
             when (it) {
                 is ViewState.Success -> {
-                    Log.d("A", it.result.toString())
+                    binding.pbChooseDiets.isVisible = false
+                    Log.d("Diets List", it.result.toString())
                     adapter.restrictionsList = it.result
                 }
-                is ViewState.Loading -> ""
+                is ViewState.Loading -> {
+                    binding.pbChooseDiets.isVisible = true
+                }
                 is ViewState.Error -> {
-                    ""
+                    binding.pbChooseDiets.isVisible = false
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

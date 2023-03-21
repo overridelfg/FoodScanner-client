@@ -48,7 +48,6 @@ class LoginFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        Log.d("ff", savedInstanceState.toString())
         return binding.root
     }
 
@@ -73,10 +72,15 @@ class LoginFragment : Fragment() {
 
     private fun subscribeError() {
         viewModel.errorInputEmail.observe(viewLifecycleOwner) {
-            val errorMessage = if (it == AuthFormErrorState.EMPTY_EMAIL) {
-                "Заполните поле Email"
-            } else
-                null
+            val errorMessage = when (it) {
+                AuthFormErrorState.EMPTY_EMAIL -> {
+                    "Заполните поле Email"
+                }
+                AuthFormErrorState.INVALID_EMAIL -> {
+                    "Неверная почта"
+                }
+                else -> null
+            }
             binding.emailContainer.error = errorMessage
         }
 
@@ -111,7 +115,7 @@ class LoginFragment : Fragment() {
                     ).show()
                 }
                 is ViewState.Success -> {
-                    binding.pbLogin.isVisible = true
+                    binding.pbLogin.isVisible = false
                     startActivity(MainActivity.newIntentMainActivity(requireContext()))
                     requireActivity().finish()
                 }

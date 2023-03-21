@@ -1,5 +1,6 @@
 package kirillrychkov.foodscanner_client.app.presentation.auth
 
+import android.util.Patterns
 import androidx.lifecycle.*
 import kirillrychkov.foodscanner_client.app.domain.OperationResult
 import kirillrychkov.foodscanner_client.app.domain.entity.Allergen
@@ -82,10 +83,16 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun validateEmailInput(email: String): Boolean{
-        if (email.isBlank()) {
-            _errorInputEmail.value = AuthFormErrorState.EMPTY_EMAIL
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            if (email.isBlank()) {
+                _errorInputEmail.value = AuthFormErrorState.EMPTY_EMAIL
+
+            }else{
+                _errorInputEmail.value = AuthFormErrorState.INVALID_EMAIL
+            }
             return false
         }
+
         return true
     }
 

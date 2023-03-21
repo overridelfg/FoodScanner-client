@@ -7,4 +7,6 @@ interface ProductsRepository {
     suspend fun getProductDetails(barcode: Long): OperationResult<Product, String?>
 
     suspend fun getProducts() : OperationResult<List<Product>, String?>
+
+    suspend fun getProductsBySearch(name: String) : OperationResult<List<Product>, String?>
 }

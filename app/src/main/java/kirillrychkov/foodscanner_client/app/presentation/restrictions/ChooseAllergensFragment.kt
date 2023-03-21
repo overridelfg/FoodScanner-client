@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.domain.entity.Allergen
 import kirillrychkov.foodscanner_client.databinding.FragmentChooseAllergensBinding
@@ -65,11 +67,19 @@ class ChooseAllergensFragment : Fragment() {
         viewModel.allergensList.observe(viewLifecycleOwner){
             when (it) {
                 is ViewState.Success -> {
+                    binding.pbChooseAllergens.isVisible = false
                     adapter.restrictionsList = it.result
                 }
-                is ViewState.Loading -> ""
+                is ViewState.Loading -> {
+                    binding.pbChooseAllergens.isVisible = true
+                }
                 is ViewState.Error -> {
-                    ""
+                    binding.pbChooseAllergens.isVisible = false
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
 

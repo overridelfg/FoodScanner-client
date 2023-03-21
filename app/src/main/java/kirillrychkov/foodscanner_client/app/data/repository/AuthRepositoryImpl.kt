@@ -50,7 +50,6 @@ class AuthRepositoryImpl @Inject constructor(
             } catch (e: Exception){
                 return@withContext OperationResult.Error("Неизвестная ошибка")
             }
-
         }
     }
 

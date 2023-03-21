@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20sp"
             android:layout_marginTop="70dp"
-            android:text="@string/sign_up"
+            android:text="@string/register_title_main"
             android:textColor="@color/white"
             android:fontFamily="@font/open_sans_bold"
             android:textSize="30sp"
