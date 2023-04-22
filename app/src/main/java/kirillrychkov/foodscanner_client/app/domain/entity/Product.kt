@@ -11,5 +11,7 @@ data class Product(
     val Kcal: String,
     val Kj: Int,
     val Weight: String,
-    val Jpg: String
+    val Jpg: String,
+    val isValid: Boolean,
+    val isFavorite: Boolean
 )

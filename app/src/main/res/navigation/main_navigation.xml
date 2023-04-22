@@ -9,7 +9,11 @@
         android:id="@+id/barcodeScannerFragment"
         android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeScannerFragment"
         android:label="fragment_barcode_scanner"
-        tools:layout="@layout/fragment_barcode_scanner" />
+        tools:layout="@layout/fragment_barcode_scanner" >
+        <action
+            android:id="@+id/action_barcodeScannerFragment_to_productRestrictionsDetailsFragment"
+            app:destination="@id/productRestrictionsDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.ProfileFragment"
@@ -19,5 +23,24 @@
         android:id="@+id/productsListFragment"
         android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListFragment"
         android:label="fragment_products_list"
-        tools:layout="@layout/fragment_products_list" />
+        tools:layout="@layout/fragment_products_list" >
+        <action
+            android:id="@+id/action_productsListFragment_to_productRestrictionsDetailsFragment"
+            app:destination="@id/productRestrictionsDetailsFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/productRestrictionsDetailsFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.products.details.ProductRestrictionsDetailsFragment"
+        android:label="fragment_product_restrictions_details"
+        tools:layout="@layout/fragment_product_restrictions_details" />
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.favorites.FavoritesFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_favorites" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_productRestrictionsDetailsFragment"
+            app:destination="@id/productRestrictionsDetailsFragment" />
+    </fragment>
+
 </navigation>

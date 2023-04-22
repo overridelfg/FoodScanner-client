@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.squareup.picasso.Picasso
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.domain.entity.Product
+import kirillrychkov.foodscanner_client.app.domain.entity.ProductList
 import kirillrychkov.foodscanner_client.app.domain.entity.Restriction
 import javax.inject.Inject
 
@@ -19,6 +20,8 @@ class ProductsListAdapter(): RecyclerView.Adapter<ProductViewHolder>() {
             notifyDataSetChanged()
         }
     var onProductSelectListener: ((Product) -> Unit)? = null
+    var onProductFavoriteClickListener: ((Long) -> Unit)? = null
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_product_list, parent, false)
@@ -28,6 +31,19 @@ class ProductsListAdapter(): RecyclerView.Adapter<ProductViewHolder>() {
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val currentItem = productsList[position]
         holder.tvName.text = currentItem.Name
+        if(currentItem.isFavorite){
+            holder.ivFavorite.setBackgroundResource(R.drawable.ic_baseline_bookmark_24)
+            holder.ivFavorite.isSelected = true
+        }else{
+            holder.ivFavorite.setBackgroundResource(R.drawable.ic_bookmark)
+            holder.ivFavorite.isSelected = false
+        }
+        if(currentItem.isValid){
+            holder.ivProductIsValid.setBackgroundResource(R.drawable.ic_check)
+        }else{
+            holder.ivProductIsValid.setBackgroundResource(R.drawable.ic_cross)
+        }
+
         if(currentItem.Jpg.isBlank()){
             Picasso.get().load(R.drawable.nopictures).into(holder.ivProduct);
         }else{
@@ -44,6 +60,19 @@ class ProductsListAdapter(): RecyclerView.Adapter<ProductViewHolder>() {
             }
 
         }
+
+        holder.ivFavorite.setOnClickListener {
+            if(it.isSelected){
+                holder.ivFavorite.isSelected = false
+                holder.ivFavorite.setBackgroundResource(R.drawable.ic_bookmark)
+            }else{
+                holder.ivFavorite.isSelected = true
+                holder.ivFavorite.setBackgroundResource(R.drawable.ic_baseline_bookmark_24)
+            }
+
+            onProductFavoriteClickListener?.invoke(currentItem.id)
+        }
+
         holder.itemView.setOnClickListener {
             onProductSelectListener?.invoke(currentItem)
         }

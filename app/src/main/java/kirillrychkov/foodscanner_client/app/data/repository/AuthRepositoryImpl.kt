@@ -1,5 +1,6 @@
 package kirillrychkov.foodscanner_client.app.data.repository
 
+import android.util.Log
 import kirillrychkov.foodscanner_client.app.data.PrefsStorage
 import kirillrychkov.foodscanner_client.app.data.network.ServerAPI
 import kirillrychkov.foodscanner_client.app.data.network.models.*
@@ -31,7 +32,8 @@ class AuthRepositoryImpl @Inject constructor(
                             id = result.id,
                             name = result.name,
                             email = result.email,
-                            token = result.token,
+                            accessToken = result.accessToken,
+                            refreshToken = result.refreshToken,
                             diets = result.diets,
                             allergens = result.allergens
                         )
@@ -63,10 +65,10 @@ class AuthRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val dietsList = diets.map {
-                    DietDTO(it.id, it.title)
+                    DietDTO(it.id, it.title, it.restrictedIngredients)
                 }
                 val allergensList = allergens.map {
-                    AllergenDTO(it.id, it.title)
+                    AllergenDTO(it.id, it.title, it.restrictedIngredients)
                 }
                 val response = apiService.register(
                     RegisterRequestDTO(
@@ -84,7 +86,8 @@ class AuthRepositoryImpl @Inject constructor(
                             id = result.id,
                             name = result.name,
                             email = result.email,
-                            token = result.token,
+                            accessToken = result.accessToken,
+                            refreshToken = result.refreshToken,
                             diets = result.diets,
                             allergens = result.allergens
                         )
@@ -111,6 +114,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun getUser(): User? {
+        Log.d("User", prefsStorage.getUser().toString())
         return prefsStorage.getUser()
     }
 }

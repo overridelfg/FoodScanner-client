@@ -13,7 +13,9 @@ data class ProductDTO(
     val Kcal: String,
     val Kj: Int,
     val Weight: String,
-    val Jpg: String
+    val Jpg: String,
+    val isValid: Boolean,
+    val isFavorite: Boolean
 )
 
 fun ProductDTO.toProduct(): Product {
@@ -28,6 +30,8 @@ fun ProductDTO.toProduct(): Product {
         Kcal,
         Kj,
         Weight,
-        Jpg
+        Jpg,
+        isValid,
+        isFavorite
     )
 }

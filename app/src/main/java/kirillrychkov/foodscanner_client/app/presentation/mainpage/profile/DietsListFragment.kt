@@ -2,6 +2,7 @@ package kirillrychkov.foodscanner_client.app.presentation.mainpage.profile
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -52,6 +53,7 @@ class DietsListFragment : Fragment() {
         val rvShopList = binding.rvDietsList
         adapter = ProfileRestrictionsAdapter()
         adapter.restrictionsList = viewModel.getUser.value!!.diets
+        Log.d("DIETS", viewModel.getUser.value!!.diets.toString())
         rvShopList.adapter = adapter
     }
 

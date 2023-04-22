@@ -6,14 +6,16 @@ import kirillrychkov.foodscanner_client.app.domain.entity.User
 
 data class LoginResponseDTO(
     val user : UserDTO,
-    val token : String
+    val accessToken: String,
+    val refreshToken: String
 )
 fun LoginResponseDTO.toUser() : User{
     return User(
         id = user.id,
         email = user.email,
         name = user.name,
-        token = token,
+        accessToken = accessToken,
+        refreshToken = refreshToken,
         diets = user.diets.map {
             it.toDiet()
         },

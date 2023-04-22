@@ -1,6 +1,8 @@
 package kirillrychkov.foodscanner_client.app.data
 
 import android.content.Context
+import android.util.Log
+import kirillrychkov.foodscanner_client.app.data.network.models.TokensResponseDTO
 import kirillrychkov.foodscanner_client.app.domain.entity.Allergen
 import kirillrychkov.foodscanner_client.app.domain.entity.Diet
 import kirillrychkov.foodscanner_client.app.domain.entity.User
@@ -18,11 +20,12 @@ class PrefsStorage @Inject constructor(
         val id = sharedPreferences.getString(ID_KEY, null)
         val email = sharedPreferences.getString(EMAIL_KEY, null)
         val name = sharedPreferences.getString(USERNAME_KEY, null)
-        val token = sharedPreferences.getString(TOKEN_KEY, null)
+        val accessToken = sharedPreferences.getString(ACCESS_TOKEN_KEY, null)
+        val refreshToken = sharedPreferences.getString(REFRESH_TOKEN_KEY, null)
         val diets = sharedPreferences.getString(DIETS_KEY, null)
         val allergens = sharedPreferences.getString(ALLERGENS_KEY, null)
         if(!id.isNullOrBlank() && !email.isNullOrBlank() && !name.isNullOrBlank()
-            && !token.isNullOrBlank() && !diets.isNullOrBlank()
+            && !accessToken.isNullOrBlank() && !refreshToken.isNullOrBlank() && !diets.isNullOrBlank()
             && !allergens.isNullOrBlank()){
 
             val listOfDietsString = diets.split(":")
@@ -35,12 +38,20 @@ class PrefsStorage @Inject constructor(
                 id = id,
                 email = email,
                 name = name,
-                token = token,
+                accessToken = accessToken,
+                refreshToken = refreshToken,
                 diets = listOfDiets,
                 allergens = listOfAllergens
             )
         }
         return null
+    }
+
+    fun refreshTokens(tokens: TokensResponseDTO){
+        sharedPreferences.edit()
+            .putString(ACCESS_TOKEN_KEY, tokens.accessToken)
+            .putString(REFRESH_TOKEN_KEY, tokens.refreshToken)
+            .apply()
     }
 
     fun saveToSharedPreferences(user: User?){
@@ -49,7 +60,8 @@ class PrefsStorage @Inject constructor(
                 .putString(ID_KEY, user.id)
                 .putString(USERNAME_KEY, user.name)
                 .putString(EMAIL_KEY, user.email)
-                .putString(TOKEN_KEY, user.token)
+                .putString(ACCESS_TOKEN_KEY, user.accessToken)
+                .putString(REFRESH_TOKEN_KEY, user.refreshToken)
                 .putString(DIETS_KEY, encodeDietsList(user.diets))
                 .putString(ALLERGENS_KEY, encodeAllergensList(user.allergens))
                 .apply()
@@ -58,7 +70,8 @@ class PrefsStorage @Inject constructor(
                 .remove(ID_KEY)
                 .remove(USERNAME_KEY)
                 .remove(EMAIL_KEY)
-                .remove(TOKEN_KEY)
+                .remove(ACCESS_TOKEN_KEY)
+                .remove(REFRESH_TOKEN_KEY)
                 .remove(DIETS_KEY)
                 .remove(ALLERGENS_KEY)
                 .apply()
@@ -69,10 +82,23 @@ class PrefsStorage @Inject constructor(
         if(listOfDiets != null){
             var diets = ""
             for (i in 0 until listOfDiets.size){
+                val restrictedIngredientsList = listOfDiets[i].restrictedIngredients
+                var restrictedIngredients = ""
+                for(j in 0 until restrictedIngredientsList.size){
+                    if(j == restrictedIngredientsList.size - 1){
+                        restrictedIngredients += restrictedIngredientsList[j]
+                    }else{
+                        restrictedIngredients += restrictedIngredientsList[j] + "-"
+                    }
+                }
                 if(i == listOfDiets.size - 1){
-                    diets += listOfDiets[i].id.toString() + "," + listOfDiets[i].title
+                    diets += listOfDiets[i].id.toString() + "," +
+                            listOfDiets[i].title  + "," +
+                            restrictedIngredients
                 } else{
-                    diets += listOfDiets[i].id.toString() + "," + listOfDiets[i].title + ":"
+                    diets += listOfDiets[i].id.toString() + "," +
+                            listOfDiets[i].title +
+                            restrictedIngredients + ":"
                 }
             }
             sharedPreferences.edit()
@@ -90,10 +116,23 @@ class PrefsStorage @Inject constructor(
         if(listOfAllergens != null) {
             var allergens = ""
             for (i in 0 until listOfAllergens.size) {
-                if (i == listOfAllergens.size - 1) {
-                    allergens += listOfAllergens[i].id.toString() + "," + listOfAllergens[i].title
-                } else {
-                    allergens += listOfAllergens[i].id.toString() + "," + listOfAllergens[i].title + ":"
+                val restrictedIngredientsList = listOfAllergens[i].restrictedIngredients
+                var restrictedIngredients = ""
+                for(j in 0 until restrictedIngredientsList.size){
+                    if(j == restrictedIngredientsList.size - 1){
+                        restrictedIngredients += restrictedIngredientsList[j]
+                    }else{
+                        restrictedIngredients += restrictedIngredientsList[j] + "-"
+                    }
+                }
+                if(i == listOfAllergens.size - 1){
+                    allergens += listOfAllergens[i].id.toString() + "," +
+                            listOfAllergens[i].title  + "," +
+                            restrictedIngredients
+                } else{
+                    allergens += listOfAllergens[i].id.toString() + "," +
+                            listOfAllergens[i].title +
+                            restrictedIngredients + ":"
                 }
             }
             sharedPreferences.edit()
@@ -128,10 +167,23 @@ class PrefsStorage @Inject constructor(
         var diets = ""
         for (i in 0 until listOfDiets.size){
             val diet = listOfDiets[i]
+            val restrictedIngredientsList = listOfDiets[i].restrictedIngredients
+            var restrictedIngredients = ""
+            for(j in 0 until restrictedIngredientsList.size){
+                if(j == restrictedIngredientsList.size - 1){
+                    restrictedIngredients += restrictedIngredientsList[j]
+                }else{
+                    restrictedIngredients += restrictedIngredientsList[j] + "-"
+                }
+            }
             if(i == listOfDiets.size - 1){
-                diets += diet.id.toString() + "," + diet.title
+                diets += listOfDiets[i].id.toString() + "," +
+                        listOfDiets[i].title  + "," +
+                        restrictedIngredients
             } else{
-                diets += diet.id.toString() + "," + diet.title + ":"
+                diets += listOfDiets[i].id.toString() + "," +
+                        listOfDiets[i].title +
+                        restrictedIngredients + ":"
             }
         }
         return diets
@@ -140,11 +192,23 @@ class PrefsStorage @Inject constructor(
     private fun encodeAllergensList(listOfAllergens: List<Allergen>) : String{
         var allergens = ""
         for (i in 0 until listOfAllergens.size){
-            val allergen = listOfAllergens[i]
+            val restrictedIngredientsList = listOfAllergens[i].restrictedIngredients
+            var restrictedIngredients = ""
+            for(j in 0 until restrictedIngredientsList.size){
+                if(j == restrictedIngredientsList.size - 1){
+                    restrictedIngredients += restrictedIngredientsList[j]
+                }else{
+                    restrictedIngredients += restrictedIngredientsList[j] + "-"
+                }
+            }
             if(i == listOfAllergens.size - 1){
-                allergens += allergen.id.toString() + "," + allergen.title
+                allergens += listOfAllergens[i].id.toString() + "," +
+                        listOfAllergens[i].title  + "," +
+                        restrictedIngredients
             } else{
-                allergens += allergen.id.toString() + "," + allergen.title + ":"
+                allergens += listOfAllergens[i].id.toString() + "," +
+                        listOfAllergens[i].title +
+                        restrictedIngredients + ":"
             }
         }
         return allergens
@@ -156,7 +220,9 @@ class PrefsStorage @Inject constructor(
         for (diet in listOfDietsString){
             val dietId = diet.split(",")[0].toInt()
             val title = diet.split(",")[1]
-            listOfDiets.add(Diet(dietId, title))
+            val restrictedIngredients = diet.split(",")[2]
+            val restrictedIngredientsList = restrictedIngredients.split('-')
+            listOfDiets.add(Diet(dietId, title, restrictedIngredientsList))
         }
         return listOfDiets
     }
@@ -167,7 +233,9 @@ class PrefsStorage @Inject constructor(
         for (allergen in listOfAllergensString){
             val allergenId = allergen.split(",")[0].toInt()
             val title = allergen.split(",")[1]
-            listOfAllergens.add(Allergen(allergenId, title))
+            val restrictedIngredients = allergen.split(",")[2]
+            val restrictedIngredientsList = restrictedIngredients.split('-')
+            listOfAllergens.add(Allergen(allergenId, title, restrictedIngredientsList))
         }
         return listOfAllergens
     }
@@ -176,7 +244,8 @@ class PrefsStorage @Inject constructor(
         private const val ID_KEY = "id"
         private const val USERNAME_KEY = "username"
         private const val EMAIL_KEY = "email"
-        private const val TOKEN_KEY = "token"
+        private const val REFRESH_TOKEN_KEY = "access_token"
+        private const val ACCESS_TOKEN_KEY = "refresh_token"
         private const val DIETS_KEY = "diets"
         private const val ALLERGENS_KEY = "allergens"
     }

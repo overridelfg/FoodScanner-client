@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,15 +12,18 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.domain.entity.Product
+import kirillrychkov.foodscanner_client.app.domain.entity.ProductRestriction
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.favorites.FavoritesFragment
 import kirillrychkov.foodscanner_client.databinding.FragmentProductsListBinding
 import kotlinx.coroutines.delay
 import java.net.URLEncoder
@@ -64,8 +68,12 @@ class ProductsListFragment : Fragment() {
         subscribeGetProductsBySearch()
         bindSearchButton()
         setOnTextChange()
+        subscribeAddFavoriteResult()
+        setupSwipeToRefreshLayout()
+        subscribeGetProductRestrictionsDetails()
         viewModel.getProducts()
         subscribeGetProductsList()
+        viewModel.getProductRestrictionsDetails(10371)
     }
 
     private fun subscribeGetProductsList() {
@@ -119,12 +127,16 @@ class ProductsListFragment : Fragment() {
         rvProductsList.layoutManager = GridLayoutManager(requireContext(), 2)
         adapter = ProductsListAdapter()
         adapter.onProductSelectListener = {
+            viewModel.getProductRestrictionsDetails(it.id)
             val bottomSheetRoot = binding.bottomSheet.bottomSheetRoot
             val mBottomBehavior =
                 BottomSheetBehavior.from(bottomSheetRoot)
             mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             bottomSheetRoot.visibility = View.VISIBLE
             fillProductListUI(it)
+        }
+        adapter.onProductFavoriteClickListener = {
+            viewModel.addToFavorite(it)
         }
         rvProductsList.adapter = adapter
     }
@@ -140,30 +152,117 @@ class ProductsListFragment : Fragment() {
         }
     }
 
+    private fun setupSwipeToRefreshLayout(){
+        binding.swipeLayout.setOnRefreshListener {
+            binding.swipeLayout.isRefreshing = false
+            binding.etSearchProduct.setText("")
+            viewModel.getProducts()
+        }
+    }
+
+    private fun subscribeGetProductRestrictionsDetails(){
+        viewModel.productDetails.observe(viewLifecycleOwner){
+            when (it) {
+                is ViewState.Success -> {
+                    binding.pbProductList.isVisible = false
+                    fillProductRestrictionUI(it.result)
+                }
+                is ViewState.Loading -> {
+                    binding.pbProductList.isVisible = true
+                }
+                is ViewState.Error -> {
+                    binding.pbProductList.isVisible = false
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).setAction("OK") {
+                    }.show()
+                }
+            }
+        }
+    }
+
+    private fun subscribeAddFavoriteResult(){
+        viewModel.addToFavoriteResult.observe(viewLifecycleOwner){
+            when (it) {
+                is ViewState.Success -> {
+                    binding.pbProductList.isVisible = false
+                }
+                is ViewState.Loading -> {
+                    binding.pbProductList.isVisible = true
+                }
+                is ViewState.Error -> {
+                    binding.pbProductList.isVisible = false
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).setAction("OK") {
+                    }.show()
+                }
+            }
+        }
+    }
+
+    private fun fillProductRestrictionUI(productRestriction: ProductRestriction){
+        if(productRestriction.status == false){
+            val productRestrictionsSet = mutableSetOf<String>()
+            for(i in 0 until productRestriction.answer.size){
+                val el = productRestriction.answer[i].split(':')[1].split(',')
+                for(j in 0 until el.size){
+                    productRestrictionsSet.add(el[j])
+                }
+            }
+
+            binding.bottomSheet.tvRestrictedIngredients.text = "Запрещенные игредиенты: " +
+                    productRestrictionsSet.joinToString(", ")
+            binding.bottomSheet.tvRestrictedIngredients.isVisible = true
+            binding.bottomSheet.tvIsRestricted.text = "Продукт не подходит под ваши ограничения"
+            binding.bottomSheet.ivInfoIcon.isVisible = true
+            binding.bottomSheet.ivIsRestrictedIcon.setBackgroundResource(R.drawable.ic_restricted)
+            binding.bottomSheet.layoutIsRestricted.setBackgroundResource(R.drawable.background_restricted_layout)
+            binding.bottomSheet.ivInfoIcon.setOnClickListener {
+                val bundle = Bundle()
+                val answer = ArrayList(productRestriction.answer)
+                bundle.putStringArrayList("ANSWER", answer)
+                findNavController().navigate(R.id.action_productsListFragment_to_productRestrictionsDetailsFragment, bundle)
+            }
+
+        }else{
+            binding.bottomSheet.tvRestrictedIngredients.isVisible = false
+            binding.bottomSheet.ivInfoIcon.isVisible = false
+            binding.bottomSheet.tvIsRestricted.text = "Продукт подходит под ваши ограничения"
+            binding.bottomSheet.ivIsRestrictedIcon.setBackgroundResource(R.drawable.ic_check_circle)
+            binding.bottomSheet.layoutIsRestricted.setBackgroundResource(R.drawable.background_not_restricted_layout)
+        }
+
+    }
     private fun fillProductListUI(product: Product){
+
         val productWeight = product.Weight.replace("\\s".toRegex(), "")
         binding.bottomSheet.tvProductTitle.text = product.Name + " " + productWeight
         binding.bottomSheet.tvProductIngredients.text =
             "Ингредиенты:" + " " + product.Description
         binding.bottomSheet.tvProteins.text =
-            "Белки: " + "\n" + product.Proteins
+            "Белки " + "\n" + product.Proteins
         binding.bottomSheet.tvFats.text =
             "Жиры" + "\n" + product.Fats
         binding.bottomSheet.tvCarbohydrates.text =
             "Углеводы" + "\n" + product.Carbohydrates
         if(product.Jpg.isBlank()){
-            Picasso.get().load(R.drawable.nopictures).into(binding.bottomSheet.ivProductImg);
+            Picasso.get().load(R.drawable.no_pictures).into(binding.bottomSheet.ivProductImg);
         }else{
             try{
                 Picasso.get().isLoggingEnabled = true
                 Picasso.get().load(product.Jpg)
                     .placeholder(R.color.white)
-                    .error(R.drawable.nopictures)
+                    .error(R.drawable.no_pictures)
                     .fit()
                     .centerInside().
                     into(binding.bottomSheet.ivProductImg);
             }catch (e: Exception){
-                Picasso.get().load(R.drawable.nopictures).into(binding.bottomSheet.ivProductImg)
+                Picasso.get().load(R.drawable.no_pictures).into(binding.bottomSheet.ivProductImg)
             }
         }
     }

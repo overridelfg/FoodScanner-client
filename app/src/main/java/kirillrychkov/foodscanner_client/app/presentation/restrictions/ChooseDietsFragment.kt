@@ -64,6 +64,7 @@ class ChooseDietsFragment : Fragment() {
         viewModel.getDietsList()
         subscribeSelectedDiets()
         setupRecyclerView()
+        setupSwipeToRefreshLayout()
         launchChooseAllergensFragment()
     }
 
@@ -72,13 +73,16 @@ class ChooseDietsFragment : Fragment() {
             when (it) {
                 is ViewState.Success -> {
                     binding.pbChooseDiets.isVisible = false
+                    binding.nextButton.isEnabled = true
                     Log.d("Diets List", it.result.toString())
                     adapter.restrictionsList = it.result
                 }
                 is ViewState.Loading -> {
+                    binding.nextButton.isEnabled = false
                     binding.pbChooseDiets.isVisible = true
                 }
                 is ViewState.Error -> {
+                    binding.nextButton.isEnabled = false
                     binding.pbChooseDiets.isVisible = false
                     Snackbar.make(
                         requireView(),
@@ -87,6 +91,13 @@ class ChooseDietsFragment : Fragment() {
                     ).show()
                 }
             }
+        }
+    }
+
+    private fun setupSwipeToRefreshLayout(){
+        binding.swipeLayout.setOnRefreshListener {
+            binding.swipeLayout.isRefreshing = false
+            viewModel.getDietsList()
         }
     }
 

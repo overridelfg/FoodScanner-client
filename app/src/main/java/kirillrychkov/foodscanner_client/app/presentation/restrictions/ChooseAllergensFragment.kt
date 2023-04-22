@@ -56,6 +56,7 @@ class ChooseAllergensFragment : Fragment() {
         subscribeDietsList()
         subscribeSelectedDiets()
         setupRecyclerView()
+        setupSwipeToRefreshLayout()
         binding.nextButton.setOnClickListener {
             viewModel.postSelectedAllergens(selectedAllergens)
             findNavController().navigate(R.id.action_chooseAllergensFragment_to_registerFragment)
@@ -67,13 +68,16 @@ class ChooseAllergensFragment : Fragment() {
         viewModel.allergensList.observe(viewLifecycleOwner){
             when (it) {
                 is ViewState.Success -> {
+                    binding.nextButton.isEnabled = true
                     binding.pbChooseAllergens.isVisible = false
                     adapter.restrictionsList = it.result
                 }
                 is ViewState.Loading -> {
+                    binding.nextButton.isEnabled = false
                     binding.pbChooseAllergens.isVisible = true
                 }
                 is ViewState.Error -> {
+                    binding.nextButton.isEnabled = false
                     binding.pbChooseAllergens.isVisible = false
                     Snackbar.make(
                         requireView(),
@@ -83,6 +87,13 @@ class ChooseAllergensFragment : Fragment() {
                 }
             }
 
+        }
+    }
+
+    private fun setupSwipeToRefreshLayout(){
+        binding.swipeLayout.setOnRefreshListener {
+            binding.swipeLayout.isRefreshing = false
+            viewModel.getAllergensList()
         }
     }
 

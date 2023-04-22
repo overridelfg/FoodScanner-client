@@ -3,15 +3,16 @@ package kirillrychkov.foodscanner_client.app.di
 import dagger.Module
 import dagger.Provides
 import kirillrychkov.foodscanner_client.app.data.network.ServerAPI
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 internal class NetworkModule {
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {

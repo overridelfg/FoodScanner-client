@@ -17,13 +17,18 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.squareup.picasso.Picasso
+import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.domain.entity.Product
+import kirillrychkov.foodscanner_client.app.domain.entity.ProductRestriction
 import kirillrychkov.foodscanner_client.app.domain.repository.ProductsRepository
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
@@ -71,13 +76,10 @@ class BarcodeScannerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val bottomSheetRoot = binding.bottomSheet.bottomSheetRoot
-        bottomSheetRoot.visibility = View.VISIBLE
-        val mBottomBehavior =
-            BottomSheetBehavior.from(bottomSheetRoot)
-        mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
         subscribeGetProductDetails()
-        val barcode : Long = 4600778000767
+        subscribeGetProductRestrictionsDetails()
+        val barcode : Long = 4607960490108
         viewModel.getProductDetails(barcode)
         if(allPermissionGranted()){
             startCamera()
@@ -87,17 +89,84 @@ class BarcodeScannerFragment : Fragment() {
 
     }
 
+
+
     private fun subscribeGetProductDetails(){
         viewModel.productDetails.observe(viewLifecycleOwner){
             when(it){
                 is ViewState.Success -> {
                     bindProductData(it.result)
+                    showBottomSheetProductDetails()
+                    viewModel.getProductRestrictionsDetails(it.result.id)
                 }
                 is ViewState.Error -> {
                     Log.d(TAG, it.toString())
                 }
                 is ViewState.Loading -> {
                     Log.d(TAG, "Loading")
+                }
+            }
+        }
+    }
+
+    private fun showBottomSheetProductDetails(){
+        val bottomSheetRoot = binding.bottomSheet.bottomSheetRoot
+        bottomSheetRoot.visibility = View.VISIBLE
+        val mBottomBehavior =
+            BottomSheetBehavior.from(bottomSheetRoot)
+        mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun fillProductRestrictionUI(productRestriction: ProductRestriction){
+        if(productRestriction.status == false){
+            val productRestrictionsSet = mutableSetOf<String>()
+            for(i in 0 until productRestriction.answer.size){
+                val el = productRestriction.answer[i].split(':')[1].split(',')
+                for(j in 0 until el.size){
+                    productRestrictionsSet.add(el[j])
+                }
+            }
+
+            binding.bottomSheet.tvRestrictedIngredients.text = "Запрещенные игредиенты: " +
+                    productRestrictionsSet.joinToString(", ")
+            binding.bottomSheet.tvRestrictedIngredients.isVisible = true
+            binding.bottomSheet.tvIsRestricted.text = "Продукт не подходит под ваши ограничения"
+            binding.bottomSheet.ivInfoIcon.isVisible = true
+            binding.bottomSheet.ivIsRestrictedIcon.setBackgroundResource(R.drawable.ic_restricted)
+            binding.bottomSheet.layoutIsRestricted.setBackgroundResource(R.drawable.background_restricted_layout)
+            binding.bottomSheet.ivInfoIcon.setOnClickListener {
+                val bundle = Bundle()
+                val answer = ArrayList(productRestriction.answer)
+                bundle.putStringArrayList("ANSWER", answer)
+                findNavController().navigate(R.id.action_barcodeScannerFragment_to_productRestrictionsDetailsFragment, bundle)
+            }
+        }else{
+            binding.bottomSheet.tvRestrictedIngredients.isVisible = false
+            binding.bottomSheet.tvIsRestricted.text = "Продукт подходит под ваши ограничения"
+            binding.bottomSheet.ivIsRestrictedIcon.setBackgroundResource(R.drawable.ic_check_circle)
+            binding.bottomSheet.layoutIsRestricted.setBackgroundResource(R.drawable.background_not_restricted_layout)
+        }
+
+    }
+
+    private fun subscribeGetProductRestrictionsDetails(){
+        viewModel.productRestrictionDetails.observe(viewLifecycleOwner){
+            when (it) {
+                is ViewState.Success -> {
+                    binding.pbBarcodeDetails.isVisible = false
+                    fillProductRestrictionUI(it.result)
+                }
+                is ViewState.Loading -> {
+                    binding.pbBarcodeDetails.isVisible = true
+                }
+                is ViewState.Error -> {
+                    binding.pbBarcodeDetails.isVisible = false
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).setAction("OK") {
+                    }.show()
                 }
             }
         }
@@ -120,7 +189,21 @@ class BarcodeScannerFragment : Fragment() {
             "Жиры" + "\n" + product.Fats
         binding.bottomSheet.tvCarbohydrates.text =
             "Углеводы" + "\n" + product.Carbohydrates
-        Glide.with(requireContext()).load(product.Jpg).into(binding.bottomSheet.ivProductImg)
+        if(product.Jpg.isBlank()){
+            Picasso.get().load(R.drawable.no_pictures).into(binding.bottomSheet.ivProductImg);
+        }else{
+            try{
+                Picasso.get().isLoggingEnabled = true
+                Picasso.get().load(product.Jpg)
+                    .placeholder(R.color.white)
+                    .error(R.drawable.no_pictures)
+                    .fit()
+                    .centerInside().
+                    into(binding.bottomSheet.ivProductImg);
+            }catch (e: Exception){
+                Picasso.get().load(R.drawable.no_pictures).into(binding.bottomSheet.ivProductImg)
+            }
+        }
     }
 
     private fun startCamera() {
@@ -172,6 +255,9 @@ class BarcodeScannerFragment : Fragment() {
                         private fun readBarcodeData(barcodes: List<Barcode>) {
                             for(barcode in barcodes){
                                 Log.d("CameraX", barcode.rawValue.toString())
+                                if(barcode.rawValue != null){
+                                    viewModel.getProductDetails(barcode.rawValue!!.toLong())
+                                }
                             }
                         }
                     })

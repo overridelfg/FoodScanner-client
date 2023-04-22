@@ -13,6 +13,12 @@
         android:title="@string/products_bottom_navigation_title"/>
 
     <item
+        android:id="@+id/favoritesFragment"
+        android:icon="@drawable/ic_baseline_bookmark_24"
+        android:enabled="true"
+        android:title="Избранное"/>
+
+    <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/icon_person"
         android:enabled="true"
