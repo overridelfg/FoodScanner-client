@@ -17,7 +17,7 @@ import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.Produ
 import kirillrychkov.foodscanner_client.databinding.FragmentProductRestrictionsDetailsBinding
 import kirillrychkov.foodscanner_client.databinding.FragmentProductsListBinding
 
-class ProductRestrictionsDetailsFragment : BottomSheetDialogFragment() {
+class ProductRestrictionsDetailsFragment : Fragment() {
 
     private var _binding: FragmentProductRestrictionsDetailsBinding? = null
     private val binding: FragmentProductRestrictionsDetailsBinding
@@ -25,10 +25,6 @@ class ProductRestrictionsDetailsFragment : BottomSheetDialogFragment() {
 
     private lateinit var adapter: ProductsRestrictionsDetailsAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.BottomSheetDialogTheme);
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,18 +33,22 @@ class ProductRestrictionsDetailsFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        (dialog as BottomSheetDialog).behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
     }
+
+
 
     private fun setupRecyclerView(){
         val rvProductsList = binding.rvProductDetails
         adapter = ProductsRestrictionsDetailsAdapter()
-        val arguments = requireArguments().getStringArrayList("ANSWER")
-        if (arguments != null) {
-            adapter.productsList = arguments.toList()
+        val argumentDiets = requireArguments().getStringArrayList("ANSWER_DIETS")
+        val argumentAllergens = requireArguments().getStringArrayList("ANSWER_ALLERGENS")
+        if (argumentDiets != null) {
+            if (argumentAllergens != null) {
+                adapter.productsList = (argumentDiets.toList() + argumentAllergens.toList())
+            }
         }
         adapter.productsList
         rvProductsList.adapter = adapter

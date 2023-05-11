@@ -9,6 +9,7 @@ import kirillrychkov.foodscanner_client.app.domain.OperationResult
 import kirillrychkov.foodscanner_client.app.domain.entity.Allergen
 import kirillrychkov.foodscanner_client.app.domain.entity.Diet
 import kirillrychkov.foodscanner_client.app.domain.entity.Ingredient
+import kirillrychkov.foodscanner_client.app.domain.usecase.profile.UpdateRestrictionsUseCase
 import kirillrychkov.foodscanner_client.app.domain.usecase.restrictions.*
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
 import kotlinx.coroutines.launch
@@ -22,7 +23,8 @@ class ChooseRestrictionsViewModel @Inject constructor(
     private val postSelectedAllergensUseCase: PostSelectedAllergensUseCase,
     private val getSelectedDietsUseCase: GetSelectedDietsUseCase,
     private val getSelectedAllergensUseCase: GetSelectedAllergensUseCase,
-    private val removeSelectedRestrictionsUseCase: RemoveSelectedRestrictionsUseCase
+    private val removeSelectedRestrictionsUseCase: RemoveSelectedRestrictionsUseCase,
+    val updateRestrictionsUseCase: UpdateRestrictionsUseCase
 ) : ViewModel() {
 
     private val _dietsList = MutableLiveData<ViewState<List<Diet>, String?>>()
@@ -44,6 +46,10 @@ class ChooseRestrictionsViewModel @Inject constructor(
     private val _selectedAllergensList = MutableLiveData<MutableList<Allergen>>()
     val selectedAllergensList : LiveData<MutableList<Allergen>>
         get() = _selectedAllergensList
+
+    private val _updateRestrictionsResult = MutableLiveData<ViewState<String, String?>>()
+    val updateRestrictionsResult : LiveData<ViewState<String, String?>>
+        get() = _updateRestrictionsResult
 
     fun getDietsList(){
         viewModelScope.launch {
@@ -72,6 +78,17 @@ class ChooseRestrictionsViewModel @Inject constructor(
             _ingredientsList.value = ViewState.loading()
             val result = getIngredientsListUseCase.invoke()
             _ingredientsList.value = when (result) {
+                is OperationResult.Error -> ViewState.error(result.data)
+                is OperationResult.Success -> ViewState.success(result.data)
+            }
+        }
+    }
+
+    fun updateRestrictions(diets: List<Diet>, allergens : List<Allergen>){
+        viewModelScope.launch {
+            _updateRestrictionsResult.value = ViewState.loading()
+            val result = updateRestrictionsUseCase.invoke(diets, allergens)
+            _updateRestrictionsResult.value = when (result) {
                 is OperationResult.Error -> ViewState.error(result.data)
                 is OperationResult.Success -> ViewState.success(result.data)
             }

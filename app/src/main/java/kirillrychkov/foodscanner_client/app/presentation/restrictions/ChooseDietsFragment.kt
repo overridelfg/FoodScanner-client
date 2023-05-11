@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.databinding.FragmentChooseDietsBinding
@@ -74,7 +75,6 @@ class ChooseDietsFragment : Fragment() {
                 is ViewState.Success -> {
                     binding.pbChooseDiets.isVisible = false
                     binding.nextButton.isEnabled = true
-                    Log.d("Diets List", it.result.toString())
                     adapter.restrictionsList = it.result
                 }
                 is ViewState.Loading -> {
@@ -104,7 +104,14 @@ class ChooseDietsFragment : Fragment() {
     private fun launchChooseAllergensFragment(){
         binding.nextButton.setOnClickListener {
             viewModel.postSelectedDiets(selectedDiets)
-            findNavController().navigate(R.id.action_chooseDietsFragment_to_chooseAllergensFragment)
+            val isUpdate: Boolean? = arguments?.getBoolean("UPDATE_RESTRICTIONS")
+            if(isUpdate != null){
+                val bundle = Bundle()
+                bundle.putBoolean("UPDATE_RESTRICTIONS", isUpdate)
+                findNavController().navigate(R.id.action_chooseDietsFragmentUpdate_to_chooseAllergensFragmentUpdate, bundle)
+            }else{
+                findNavController().navigate(R.id.action_chooseDietsFragment_to_chooseAllergensFragment)
+            }
         }
     }
 
@@ -117,6 +124,14 @@ class ChooseDietsFragment : Fragment() {
         }
         adapter.onRestrictionUncheckListener = {
             selectedDiets.remove(it as Diet)
+        }
+
+        adapter.onRestrictionInfoListener = {
+            val bundle = Bundle()
+            bundle.putString("HEADER", "Информация о диете")
+            bundle.putString("TITLE", it.title)
+            bundle.putString("DESCRIPTION", it.description)
+            findNavController().navigate(R.id.action_chooseDietsFragment_to_restrictionInfoFragment, bundle)
         }
         rvShopList.adapter = adapter
     }
@@ -133,8 +148,13 @@ class ChooseDietsFragment : Fragment() {
             object : OnBackPressedCallback(true)
             {
                 override fun handleOnBackPressed() {
-                    viewModel.removeSelectedRestrictions()
-                    findNavController().navigate(R.id.action_chooseDietsFragment_to_loginFragment)
+                    val isUpdate: Boolean? = arguments?.getBoolean("UPDATE_RESTRICTIONS")
+                    if(isUpdate != null){
+                        findNavController().navigate(R.id.action_chooseDietsFragmentUpdate_to_profileFragment)
+                    }else{
+                        viewModel.removeSelectedRestrictions()
+                        findNavController().navigate(R.id.action_chooseDietsFragment_to_loginFragment)
+                    }
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(

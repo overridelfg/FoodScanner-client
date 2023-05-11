@@ -1,12 +1,13 @@
-package kirillrychkov.foodscanner_client.app.presentation.mainpage.favorites
+package kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.history
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,20 +20,22 @@ import kirillrychkov.foodscanner_client.app.domain.entity.ProductRestriction
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeScannerViewModel
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListAdapter
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListViewModel
-import kirillrychkov.foodscanner_client.databinding.FragmentFavoritesBinding
-import kirillrychkov.foodscanner_client.databinding.FragmentProductsListBinding
+import kirillrychkov.foodscanner_client.databinding.FragmentBarcodeScannerHistoryBinding
 import javax.inject.Inject
 
-class FavoritesFragment : Fragment() {
 
-    private var _binding: FragmentFavoritesBinding? = null
-    private val binding: FragmentFavoritesBinding
-        get() = _binding ?: throw RuntimeException("FragmentFavoritesBinding == null")
+class BarcodeScannerHistoryFragment : Fragment() {
+
+    private var _binding: FragmentBarcodeScannerHistoryBinding? = null
+    private val binding: FragmentBarcodeScannerHistoryBinding
+        get() = _binding ?: throw RuntimeException("FragmentBarcodeScannerHistoryBinding == null")
 
 
-    private lateinit var viewModel: ProductsListViewModel
+    private lateinit var viewModel: BarcodeScannerViewModel
+    private lateinit var viewModelProductDetails: ProductsListViewModel
 
     private lateinit var adapter: ProductsListAdapter
 
@@ -52,17 +55,24 @@ class FavoritesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity(), viewModelFactory)[ProductsListViewModel::class.java]
-        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        viewModelProductDetails = ViewModelProvider(requireActivity(), viewModelFactory)[ProductsListViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[BarcodeScannerViewModel::class.java]
+        _binding = FragmentBarcodeScannerHistoryBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onStop() {
+        super.onStop()
+//        val fragment = parentFragmentManager.findFragmentById(R.id.barcodeScannerHistoryFragment)!!
+//        parentFragmentManager.beginTransaction().remove(fragment).commit();
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         subscribeGetProductRestrictionsDetails()
-        viewModel.getFavorites()
-        subscribeGetFavoriteList()
+        viewModel.getBarcodeScanHistory()
+        subscribeGetHistoryList()
         subscribeAddFavoriteResult()
         setupSwipeToRefreshLayout()
     }
@@ -70,22 +80,22 @@ class FavoritesFragment : Fragment() {
     private fun setupSwipeToRefreshLayout(){
         binding.swipeLayout.setOnRefreshListener {
             binding.swipeLayout.isRefreshing = false
-            viewModel.getFavorites()
+            viewModel.getBarcodeScanHistory()
         }
     }
 
-    private fun subscribeGetFavoriteList() {
-        viewModel.favoriteList.observe(viewLifecycleOwner) {
+    private fun subscribeGetHistoryList() {
+        viewModel.barcodeScanHistoryResult.observe(viewLifecycleOwner) {
             when (it) {
                 is ViewState.Success -> {
-                    binding.pbFavoriteList.isVisible = false
+                    binding.pbHistoryList.isVisible = false
                     adapter.productsList = it.result
                 }
                 is ViewState.Loading -> {
-                    binding.pbFavoriteList.isVisible = true
+                    binding.pbHistoryList.isVisible = true
                 }
                 is ViewState.Error -> {
-                    binding.pbFavoriteList.isVisible = false
+                    binding.pbHistoryList.isVisible = false
                     Snackbar.make(
                         requireView(),
                         it.result.toString(),
@@ -103,7 +113,8 @@ class FavoritesFragment : Fragment() {
         rvProductsList.layoutManager = GridLayoutManager(requireContext(), 2)
         adapter = ProductsListAdapter()
         adapter.onProductSelectListener = {
-            viewModel.sendProductDetails(it)
+            viewModelProductDetails.sendProductDetails(it)
+            viewModel.getProductRestrictionsDetails(it.id)
             val bottomSheetRoot = binding.bottomSheet.bottomSheetRoot
             val mBottomBehavior =
                 BottomSheetBehavior.from(bottomSheetRoot)
@@ -118,16 +129,16 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun subscribeGetProductRestrictionsDetails(){
-        viewModel.productDetails.observe(viewLifecycleOwner){
+        viewModel.productRestrictionDetails.observe(viewLifecycleOwner){
             when (it) {
                 is ViewState.Success -> {
-                    binding.pbFavoriteList.isVisible = false
+                    binding.pbHistoryList.isVisible = false
                 }
                 is ViewState.Loading -> {
-                    binding.pbFavoriteList.isVisible = true
+                    binding.pbHistoryList.isVisible = true
                 }
                 is ViewState.Error -> {
-                    binding.pbFavoriteList.isVisible = false
+                    binding.pbHistoryList.isVisible = false
                     Snackbar.make(
                         requireView(),
                         it.result.toString(),
@@ -160,5 +171,5 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-}
 
+}

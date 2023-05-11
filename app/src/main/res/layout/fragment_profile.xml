@@ -51,10 +51,24 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:overScrollMode="never"
-        app:layout_constraintBottom_toTopOf="@+id/logout_button"
+        app:layout_constraintBottom_toTopOf="@+id/update_restrictions_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tab_layout_profile" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/update_restrictions_button"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:layout_marginHorizontal="20sp"
+        android:fontFamily="@font/open_sans_medium"
+        android:letterSpacing="0"
+        android:text="Изменить ограничения"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        app:backgroundTint="@color/main_blue"
+        app:layout_constraintBottom_toTopOf="@id/logout_button"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/logout_button"

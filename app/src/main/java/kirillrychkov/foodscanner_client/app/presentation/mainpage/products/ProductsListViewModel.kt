@@ -42,6 +42,14 @@ class ProductsListViewModel @Inject constructor(
     val addToFavoriteResult : LiveData<ViewState<SuccessResponse, String?>>
         get() = _addToFavoriteResult
 
+    private val _getProductDetails = MutableLiveData<Product>()
+    val getProductDetails : LiveData<Product>
+        get() = _getProductDetails
+
+    fun sendProductDetails(product: Product){
+        _getProductDetails.value = product
+    }
+
     fun getProducts(){
         viewModelScope.launch {
             _productsList.value = ViewState.loading()

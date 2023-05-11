@@ -7,9 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
+import kirillrychkov.foodscanner_client.app.presentation.ViewState
 import kirillrychkov.foodscanner_client.databinding.FragmentDietsListBinding
 import javax.inject.Inject
 
@@ -46,15 +49,37 @@ class DietsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecyclerView()
+        viewModel.getUserDiets()
+        subscribeDietsList()
         super.onViewCreated(view, savedInstanceState)
     }
 
     private fun setupRecyclerView(){
         val rvShopList = binding.rvDietsList
         adapter = ProfileRestrictionsAdapter()
-        adapter.restrictionsList = viewModel.getUser.value!!.diets
-        Log.d("DIETS", viewModel.getUser.value!!.diets.toString())
         rvShopList.adapter = adapter
+    }
+
+    private fun subscribeDietsList(){
+        viewModel.userDiets.observe(viewLifecycleOwner){
+            when (it) {
+                is ViewState.Success -> {
+                    binding.pbUserDiets.isVisible = false
+                    adapter.restrictionsList = it.result
+                }
+                is ViewState.Loading -> {
+                    binding.pbUserDiets.isVisible = true
+                }
+                is ViewState.Error -> {
+                    binding.pbUserDiets.isVisible = false
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 
 }

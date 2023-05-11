@@ -16,7 +16,7 @@ class PrefsStorage @Inject constructor(
         Context.MODE_PRIVATE
     )
 
-    fun getUser() : User?{
+    fun getUser(): User? {
         val id = sharedPreferences.getString(ID_KEY, null)
         val email = sharedPreferences.getString(EMAIL_KEY, null)
         val name = sharedPreferences.getString(USERNAME_KEY, null)
@@ -24,9 +24,10 @@ class PrefsStorage @Inject constructor(
         val refreshToken = sharedPreferences.getString(REFRESH_TOKEN_KEY, null)
         val diets = sharedPreferences.getString(DIETS_KEY, null)
         val allergens = sharedPreferences.getString(ALLERGENS_KEY, null)
-        if(!id.isNullOrBlank() && !email.isNullOrBlank() && !name.isNullOrBlank()
-            && !accessToken.isNullOrBlank() && !refreshToken.isNullOrBlank() && !diets.isNullOrBlank()
-            && !allergens.isNullOrBlank()){
+        if (!id.isNullOrBlank() && !email.isNullOrBlank() && !name.isNullOrBlank()
+            && !accessToken.isNullOrBlank() && !refreshToken.isNullOrBlank() && diets != null
+            && allergens != null
+        ) {
 
             val listOfDietsString = diets.split(":")
             val listOfAllergensString = allergens.split(":")
@@ -47,15 +48,15 @@ class PrefsStorage @Inject constructor(
         return null
     }
 
-    fun refreshTokens(tokens: TokensResponseDTO){
+    fun refreshTokens(tokens: TokensResponseDTO) {
         sharedPreferences.edit()
             .putString(ACCESS_TOKEN_KEY, tokens.accessToken)
             .putString(REFRESH_TOKEN_KEY, tokens.refreshToken)
             .apply()
     }
 
-    fun saveToSharedPreferences(user: User?){
-        if(user != null){
+    fun saveToSharedPreferences(user: User?) {
+        if (user != null) {
             sharedPreferences.edit()
                 .putString(ID_KEY, user.id)
                 .putString(USERNAME_KEY, user.name)
@@ -65,7 +66,7 @@ class PrefsStorage @Inject constructor(
                 .putString(DIETS_KEY, encodeDietsList(user.diets))
                 .putString(ALLERGENS_KEY, encodeAllergensList(user.allergens))
                 .apply()
-        }else{
+        } else {
             sharedPreferences.edit()
                 .remove(ID_KEY)
                 .remove(USERNAME_KEY)
@@ -78,164 +79,177 @@ class PrefsStorage @Inject constructor(
         }
     }
 
-    fun saveListOfDiets(listOfDiets : List<Diet>?){
-        if(listOfDiets != null){
+    fun saveListOfDiets(listOfDiets: List<Diet>?) {
+        if (listOfDiets != null) {
             var diets = ""
-            for (i in 0 until listOfDiets.size){
+            for (i in 0 until listOfDiets.size) {
                 val restrictedIngredientsList = listOfDiets[i].restrictedIngredients
                 var restrictedIngredients = ""
-                for(j in 0 until restrictedIngredientsList.size){
-                    if(j == restrictedIngredientsList.size - 1){
+                for (j in 0 until restrictedIngredientsList.size) {
+                    if (j == restrictedIngredientsList.size - 1) {
                         restrictedIngredients += restrictedIngredientsList[j]
-                    }else{
+                    } else {
                         restrictedIngredients += restrictedIngredientsList[j] + "-"
                     }
                 }
-                if(i == listOfDiets.size - 1){
+                if (i == listOfDiets.size - 1) {
                     diets += listOfDiets[i].id.toString() + "," +
-                            listOfDiets[i].title  + "," +
+                            listOfDiets[i].title + "," +
+                            listOfDiets[i].description + "," +
                             restrictedIngredients
-                } else{
+                } else {
                     diets += listOfDiets[i].id.toString() + "," +
-                            listOfDiets[i].title +
+                            listOfDiets[i].title + "," +
+                            listOfDiets[i].description + "," +
                             restrictedIngredients + ":"
                 }
             }
             sharedPreferences.edit()
                 .putString(DIETS_KEY, diets)
                 .apply()
-        }else{
+        } else {
             sharedPreferences.edit()
                 .remove(DIETS_KEY)
                 .apply()
         }
-
     }
 
-    fun saveListOfAllergens(listOfAllergens : List<Allergen>?){
-        if(listOfAllergens != null) {
+    fun saveListOfAllergens(listOfAllergens: List<Allergen>?) {
+        if (listOfAllergens != null) {
             var allergens = ""
             for (i in 0 until listOfAllergens.size) {
                 val restrictedIngredientsList = listOfAllergens[i].restrictedIngredients
                 var restrictedIngredients = ""
-                for(j in 0 until restrictedIngredientsList.size){
-                    if(j == restrictedIngredientsList.size - 1){
+                for (j in 0 until restrictedIngredientsList.size) {
+                    if (j == restrictedIngredientsList.size - 1) {
                         restrictedIngredients += restrictedIngredientsList[j]
-                    }else{
+                    } else {
                         restrictedIngredients += restrictedIngredientsList[j] + "-"
                     }
                 }
-                if(i == listOfAllergens.size - 1){
+                if (i == listOfAllergens.size - 1) {
                     allergens += listOfAllergens[i].id.toString() + "," +
-                            listOfAllergens[i].title  + "," +
+                            listOfAllergens[i].title + "," +
+                            listOfAllergens[i].description + "," +
                             restrictedIngredients
-                } else{
+                } else {
                     allergens += listOfAllergens[i].id.toString() + "," +
-                            listOfAllergens[i].title +
+                            listOfAllergens[i].title + "," +
+                            listOfAllergens[i].description + "," +
                             restrictedIngredients + ":"
                 }
             }
             sharedPreferences.edit()
                 .putString(ALLERGENS_KEY, allergens)
                 .apply()
-        }else{
+        } else {
             sharedPreferences.edit()
                 .remove(ALLERGENS_KEY)
                 .apply()
         }
     }
 
-    fun getListOfDiets() : MutableList<Diet>?{
+    fun getListOfDiets(): MutableList<Diet>? {
         val diets = sharedPreferences.getString(DIETS_KEY, "")
-        if(!diets.isNullOrBlank()) {
+        if (!diets.isNullOrBlank()) {
             val listOfDietsString = diets.split(":")
             return decodeDietsList(listOfDietsString)
         }
         return null
     }
 
-    fun getListOfAllergens() : MutableList<Allergen>?{
+    fun getListOfAllergens(): MutableList<Allergen>? {
         val allergens = sharedPreferences.getString(ALLERGENS_KEY, "")
-        if(!allergens.isNullOrBlank()) {
+        if (!allergens.isNullOrBlank()) {
             val listOfAllergensString = allergens.split(":")
             return decodeAllergensList(listOfAllergensString)
         }
         return null
     }
 
-    private fun encodeDietsList(listOfDiets: List<Diet>) : String{
+    private fun encodeDietsList(listOfDiets: List<Diet>): String {
         var diets = ""
-        for (i in 0 until listOfDiets.size){
+        for (i in 0 until listOfDiets.size) {
             val diet = listOfDiets[i]
             val restrictedIngredientsList = listOfDiets[i].restrictedIngredients
             var restrictedIngredients = ""
-            for(j in 0 until restrictedIngredientsList.size){
-                if(j == restrictedIngredientsList.size - 1){
+            for (j in 0 until restrictedIngredientsList.size) {
+                if (j == restrictedIngredientsList.size - 1) {
                     restrictedIngredients += restrictedIngredientsList[j]
-                }else{
+                } else {
                     restrictedIngredients += restrictedIngredientsList[j] + "-"
                 }
             }
-            if(i == listOfDiets.size - 1){
+            if (i == listOfDiets.size - 1) {
                 diets += listOfDiets[i].id.toString() + "," +
-                        listOfDiets[i].title  + "," +
+                        listOfDiets[i].title + "," +
+                        listOfDiets[i].description + "," +
                         restrictedIngredients
-            } else{
+            } else {
                 diets += listOfDiets[i].id.toString() + "," +
-                        listOfDiets[i].title +
+                        listOfDiets[i].title + "," +
+                        listOfDiets[i].description + "," +
                         restrictedIngredients + ":"
             }
         }
         return diets
     }
 
-    private fun encodeAllergensList(listOfAllergens: List<Allergen>) : String{
+    private fun encodeAllergensList(listOfAllergens: List<Allergen>): String {
         var allergens = ""
-        for (i in 0 until listOfAllergens.size){
+        for (i in 0 until listOfAllergens.size) {
             val restrictedIngredientsList = listOfAllergens[i].restrictedIngredients
             var restrictedIngredients = ""
-            for(j in 0 until restrictedIngredientsList.size){
-                if(j == restrictedIngredientsList.size - 1){
+            for (j in 0 until restrictedIngredientsList.size) {
+                if (j == restrictedIngredientsList.size - 1) {
                     restrictedIngredients += restrictedIngredientsList[j]
-                }else{
+                } else {
                     restrictedIngredients += restrictedIngredientsList[j] + "-"
                 }
             }
-            if(i == listOfAllergens.size - 1){
+            if (i == listOfAllergens.size - 1) {
                 allergens += listOfAllergens[i].id.toString() + "," +
-                        listOfAllergens[i].title  + "," +
+                        listOfAllergens[i].title + "," +
+                        listOfAllergens[i].description + "," +
                         restrictedIngredients
-            } else{
+            } else {
                 allergens += listOfAllergens[i].id.toString() + "," +
-                        listOfAllergens[i].title +
+                        listOfAllergens[i].title + "," +
+                        listOfAllergens[i].description + "," +
                         restrictedIngredients + ":"
             }
         }
         return allergens
     }
 
-    private fun decodeDietsList(listOfDietsString : List<String>) : MutableList<Diet>{
+    private fun decodeDietsList(listOfDietsString: List<String>): MutableList<Diet> {
         val listOfDiets = mutableListOf<Diet>()
 
-        for (diet in listOfDietsString){
-            val dietId = diet.split(",")[0].toInt()
-            val title = diet.split(",")[1]
-            val restrictedIngredients = diet.split(",")[2]
-            val restrictedIngredientsList = restrictedIngredients.split('-')
-            listOfDiets.add(Diet(dietId, title, restrictedIngredientsList))
+        for (diet in listOfDietsString) {
+            if (diet.split(",")[0] != "") {
+                val dietId = diet.split(",")[0].toInt()
+                val title = diet.split(",")[1]
+                val description = diet.split(",")[2]
+                val restrictedIngredients = diet.split(",")[3]
+                val restrictedIngredientsList = restrictedIngredients.split('-')
+                listOfDiets.add(Diet(dietId, title, description, restrictedIngredientsList))
+            }
         }
         return listOfDiets
     }
 
-    private fun decodeAllergensList(listOfAllergensString : List<String>) : MutableList<Allergen>{
+    private fun decodeAllergensList(listOfAllergensString: List<String>): MutableList<Allergen> {
         val listOfAllergens = mutableListOf<Allergen>()
 
-        for (allergen in listOfAllergensString){
-            val allergenId = allergen.split(",")[0].toInt()
-            val title = allergen.split(",")[1]
-            val restrictedIngredients = allergen.split(",")[2]
-            val restrictedIngredientsList = restrictedIngredients.split('-')
-            listOfAllergens.add(Allergen(allergenId, title, restrictedIngredientsList))
+        for (allergen in listOfAllergensString) {
+            if (allergen.split(",")[0] != "") {
+                val allergenId = allergen.split(",")[0].toInt()
+                val title = allergen.split(",")[1]
+                val description = allergen.split(",")[2]
+                val restrictedIngredients = allergen.split(",")[3]
+                val restrictedIngredientsList = restrictedIngredients.split('-')
+                listOfAllergens.add(Allergen(allergenId, title, description, restrictedIngredientsList))
+            }
         }
         return listOfAllergens
     }

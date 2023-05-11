@@ -43,6 +43,7 @@ internal class NetworkModule {
     }
 
     companion object{
-        const val BASE_URL = "http://192.168.1.118:8080/"
+        const val BASE_URL = "http://192.168.1.118:80/"
+        const val TEST = "https://4a20-93-90-36-135.ngrok-free.app/"
     }
 }

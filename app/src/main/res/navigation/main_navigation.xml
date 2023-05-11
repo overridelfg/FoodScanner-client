@@ -10,37 +10,69 @@
         android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeScannerFragment"
         android:label="fragment_barcode_scanner"
         tools:layout="@layout/fragment_barcode_scanner" >
+
+        <action
+            android:id="@+id/action_barcodeScannerFragment_to_barcodeScannerHistoryFragment"
+            app:destination="@id/barcodeScannerHistoryFragment" />
         <action
             android:id="@+id/action_barcodeScannerFragment_to_productRestrictionsDetailsFragment"
             app:destination="@id/productRestrictionsDetailsFragment" />
+        <action
+            android:id="@+id/action_barcodeScannerFragment_to_barcodeProductDetailsFragment"
+            app:destination="@id/barcodeProductDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_chooseDietsFragmentUpdate"
+            app:destination="@id/chooseDietsFragmentUpdate" />
+    </fragment>
     <fragment
         android:id="@+id/productsListFragment"
         android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListFragment"
         android:label="fragment_products_list"
-        tools:layout="@layout/fragment_products_list" >
-        <action
-            android:id="@+id/action_productsListFragment_to_productRestrictionsDetailsFragment"
-            app:destination="@id/productRestrictionsDetailsFragment" />
-    </fragment>
-    <dialog
-        android:id="@+id/productRestrictionsDetailsFragment"
-        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.products.details.ProductRestrictionsDetailsFragment"
-        android:label="fragment_product_restrictions_details"
-        tools:layout="@layout/fragment_product_restrictions_details" />
+        tools:layout="@layout/fragment_products_list" />
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.favorites.FavoritesFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" >
+        tools:layout="@layout/fragment_favorites" />
+    <fragment
+        android:id="@+id/barcodeScannerHistoryFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.history.BarcodeScannerHistoryFragment"
+        android:label="fragment_barcode_scanner_history"
+        tools:layout="@layout/fragment_barcode_scanner_history" />
+    <fragment
+        android:id="@+id/chooseDietsFragmentUpdate"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.restrictions.ChooseDietsFragment"
+        android:label="fragment_choose_diets"
+        tools:layout="@layout/fragment_choose_diets" >
         <action
-            android:id="@+id/action_favoritesFragment_to_productRestrictionsDetailsFragment"
-            app:destination="@id/productRestrictionsDetailsFragment" />
+            android:id="@+id/action_chooseDietsFragmentUpdate_to_chooseAllergensFragmentUpdate"
+            app:destination="@id/chooseAllergensFragmentUpdate" />
+        <action
+            android:id="@+id/action_chooseDietsFragmentUpdate_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/chooseAllergensFragmentUpdate"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.restrictions.ChooseAllergensFragment"
+        android:label="fragment_choose_allergens"
+        tools:layout="@layout/fragment_choose_allergens" >
+        <action
+            android:id="@+id/action_chooseAllergensFragmentUpdate_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_chooseAllergensFragmentUpdate_to_chooseDietsFragmentUpdate"
+            app:destination="@id/chooseDietsFragmentUpdate" />
+    </fragment>
+    <fragment
+        android:id="@+id/barcodeProductDetailsFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeProductDetailsFragment"
+        android:label="fragment_barcode_product_details"
+        tools:layout="@layout/fragment_barcode_product_details" />
 
 </navigation>

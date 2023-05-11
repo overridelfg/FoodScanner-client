@@ -2,6 +2,7 @@ package kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Instrumentation
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -33,6 +34,7 @@ import kirillrychkov.foodscanner_client.app.domain.repository.ProductsRepository
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListViewModel
 import kirillrychkov.foodscanner_client.databinding.FragmentBarcodeScannerBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -47,6 +49,7 @@ class BarcodeScannerFragment : Fragment() {
 
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var viewModel: BarcodeScannerViewModel
+    private lateinit var viewModelProductDetails: ProductsListViewModel
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -69,6 +72,7 @@ class BarcodeScannerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentBarcodeScannerBinding.inflate(layoutInflater)
+        viewModelProductDetails = ViewModelProvider(requireActivity(), viewModelFactory)[ProductsListViewModel::class.java]
         viewModel = ViewModelProvider(this, viewModelFactory)[BarcodeScannerViewModel::class.java]
         cameraExecutor = Executors.newSingleThreadExecutor()
         return binding.root
@@ -86,7 +90,14 @@ class BarcodeScannerFragment : Fragment() {
         }else{
             permReqLauncher.launch(PERMISSION)
         }
+        binding.buttonHistory.setOnClickListener {
+            findNavController().navigate(R.id.action_barcodeScannerFragment_to_barcodeScannerHistoryFragment)
+        }
 
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 
 
@@ -95,7 +106,7 @@ class BarcodeScannerFragment : Fragment() {
         viewModel.productDetails.observe(viewLifecycleOwner){
             when(it){
                 is ViewState.Success -> {
-                    bindProductData(it.result)
+                    viewModelProductDetails.sendProductDetails(it.result)
                     showBottomSheetProductDetails()
                     viewModel.getProductRestrictionsDetails(it.result.id)
                 }
@@ -117,44 +128,12 @@ class BarcodeScannerFragment : Fragment() {
         mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    private fun fillProductRestrictionUI(productRestriction: ProductRestriction){
-        if(productRestriction.status == false){
-            val productRestrictionsSet = mutableSetOf<String>()
-            for(i in 0 until productRestriction.answer.size){
-                val el = productRestriction.answer[i].split(':')[1].split(',')
-                for(j in 0 until el.size){
-                    productRestrictionsSet.add(el[j])
-                }
-            }
-
-            binding.bottomSheet.tvRestrictedIngredients.text = "Запрещенные игредиенты: " +
-                    productRestrictionsSet.joinToString(", ")
-            binding.bottomSheet.tvRestrictedIngredients.isVisible = true
-            binding.bottomSheet.tvIsRestricted.text = "Продукт не подходит под ваши ограничения"
-            binding.bottomSheet.ivInfoIcon.isVisible = true
-            binding.bottomSheet.ivIsRestrictedIcon.setBackgroundResource(R.drawable.ic_restricted)
-            binding.bottomSheet.layoutIsRestricted.setBackgroundResource(R.drawable.background_restricted_layout)
-            binding.bottomSheet.ivInfoIcon.setOnClickListener {
-                val bundle = Bundle()
-                val answer = ArrayList(productRestriction.answer)
-                bundle.putStringArrayList("ANSWER", answer)
-                findNavController().navigate(R.id.action_barcodeScannerFragment_to_productRestrictionsDetailsFragment, bundle)
-            }
-        }else{
-            binding.bottomSheet.tvRestrictedIngredients.isVisible = false
-            binding.bottomSheet.tvIsRestricted.text = "Продукт подходит под ваши ограничения"
-            binding.bottomSheet.ivIsRestrictedIcon.setBackgroundResource(R.drawable.ic_check_circle)
-            binding.bottomSheet.layoutIsRestricted.setBackgroundResource(R.drawable.background_not_restricted_layout)
-        }
-
-    }
 
     private fun subscribeGetProductRestrictionsDetails(){
         viewModel.productRestrictionDetails.observe(viewLifecycleOwner){
             when (it) {
                 is ViewState.Success -> {
                     binding.pbBarcodeDetails.isVisible = false
-                    fillProductRestrictionUI(it.result)
                 }
                 is ViewState.Loading -> {
                     binding.pbBarcodeDetails.isVisible = true
@@ -177,34 +156,8 @@ class BarcodeScannerFragment : Fragment() {
         cameraExecutor.shutdown()
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun bindProductData(product: Product){
-        val productWeight = product.Weight.replace("\\s".toRegex(), "")
-        binding.bottomSheet.tvProductTitle.text = product.Name + " " + productWeight
-        binding.bottomSheet.tvProductIngredients.text =
-            "Ингредиенты:" + " " + product.Description
-        binding.bottomSheet.tvProteins.text =
-            "Белки " + "\n" + product.Proteins
-        binding.bottomSheet.tvFats.text =
-            "Жиры" + "\n" + product.Fats
-        binding.bottomSheet.tvCarbohydrates.text =
-            "Углеводы" + "\n" + product.Carbohydrates
-        if(product.Jpg.isBlank()){
-            Picasso.get().load(R.drawable.no_pictures).into(binding.bottomSheet.ivProductImg);
-        }else{
-            try{
-                Picasso.get().isLoggingEnabled = true
-                Picasso.get().load(product.Jpg)
-                    .placeholder(R.color.white)
-                    .error(R.drawable.no_pictures)
-                    .fit()
-                    .centerInside().
-                    into(binding.bottomSheet.ivProductImg);
-            }catch (e: Exception){
-                Picasso.get().load(R.drawable.no_pictures).into(binding.bottomSheet.ivProductImg)
-            }
-        }
-    }
+
+
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -226,6 +179,8 @@ class BarcodeScannerFragment : Fragment() {
                                 scanBarcode(image)
                         }
 
+                        private var firstCall = true
+
                         private fun scanBarcode(image: ImageProxy) {
                             @SuppressLint("UnsafeOptInUsageError")
                             val image1 = image.image
@@ -241,23 +196,27 @@ class BarcodeScannerFragment : Fragment() {
 
                                 val barcodeResult = scanner.process(inputImage)
                                     .addOnSuccessListener { barcodes ->
-                                        readBarcodeData(barcodes)
+                                        val barcode = barcodes.getOrNull(0)
+                                        if (barcode != null) {
+                                            if (firstCall) {
+                                                firstCall = false
+                                                readBarcodeData(barcode)
+                                            }
+
+                                        }
                                     }
                                     .addOnFailureListener {
-                                        Toast.makeText(requireContext(), "WTF", Toast.LENGTH_LONG).show()
                                     }
                                     .addOnCompleteListener{
+                                        image1.close()
                                         image.close()
                                     }
                             }
                         }
 
-                        private fun readBarcodeData(barcodes: List<Barcode>) {
-                            for(barcode in barcodes){
-                                Log.d("CameraX", barcode.rawValue.toString())
-                                if(barcode.rawValue != null){
-                                    viewModel.getProductDetails(barcode.rawValue!!.toLong())
-                                }
+                        private fun readBarcodeData(barcode: Barcode) {
+                            if(barcode.rawValue != null){
+                                viewModel.getProductDetails(barcode.rawValue!!.toLong())
                             }
                         }
                     })

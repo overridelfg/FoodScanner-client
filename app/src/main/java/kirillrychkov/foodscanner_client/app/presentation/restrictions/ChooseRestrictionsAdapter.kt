@@ -19,6 +19,7 @@ class ChooseRestrictionsAdapter : RecyclerView.Adapter<RestrictionViewHolder>() 
 
     var onRestrictionCheckListener: ((Restriction) -> Unit)? = null
     var onRestrictionUncheckListener: ((Restriction) -> Unit)? = null
+    var onRestrictionInfoListener: ((Restriction) -> Unit)? = null
 
     var selectedDiets = mutableListOf<Diet>()
 
@@ -56,6 +57,12 @@ class ChooseRestrictionsAdapter : RecyclerView.Adapter<RestrictionViewHolder>() 
                 }
             }
         }
+
+        holder.buttonInfo.setOnClickListener {
+            onRestrictionInfoListener?.invoke(currentItem)
+        }
+
+
 
         holder.cbRestriction.setOnClickListener {
             if((it as CheckBox).isChecked){

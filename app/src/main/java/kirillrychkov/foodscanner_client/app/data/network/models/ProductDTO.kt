@@ -15,7 +15,7 @@ data class ProductDTO(
     val Weight: String,
     val Jpg: String,
     val isValid: Boolean,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
 )
 
 fun ProductDTO.toProduct(): Product {

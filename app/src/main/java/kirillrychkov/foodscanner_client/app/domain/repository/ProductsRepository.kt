@@ -17,4 +17,6 @@ interface ProductsRepository {
     suspend fun addToFavorite(productId: Long): OperationResult<SuccessResponse, String?>
 
     suspend fun getFavorites(): OperationResult<List<Product>, String?>
+
+    suspend fun getBarcodeScanHistory(): OperationResult<List<Product>, String?>
 }

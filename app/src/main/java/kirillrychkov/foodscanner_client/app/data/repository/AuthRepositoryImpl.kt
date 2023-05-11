@@ -65,10 +65,10 @@ class AuthRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val dietsList = diets.map {
-                    DietDTO(it.id, it.title, it.restrictedIngredients)
+                    DietDTO(it.id, it.title, it.description, it.restrictedIngredients)
                 }
                 val allergensList = allergens.map {
-                    AllergenDTO(it.id, it.title, it.restrictedIngredients)
+                    AllergenDTO(it.id, it.title, it.description, it.restrictedIngredients)
                 }
                 val response = apiService.register(
                     RegisterRequestDTO(

@@ -35,6 +35,13 @@
             android:textStyle="bold"
             tools:text="Ограничение" />
 
+        <ImageView
+            android:id="@+id/button_info_restriction"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_info"/>
+
 
 
     </LinearLayout>

@@ -34,6 +34,9 @@
         <action
             android:id="@+id/action_chooseDietsFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_chooseDietsFragment_to_restrictionInfoFragment"
+            app:destination="@id/restrictionInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/chooseAllergensFragment"
@@ -43,5 +46,12 @@
         <action
             android:id="@+id/action_chooseAllergensFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_chooseAllergensFragment_to_restrictionInfoFragment"
+            app:destination="@id/restrictionInfoFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/restrictionInfoFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.restrictions.RestrictionInfoFragment"
+        android:label="RestrictionInfoFragment" />
 </navigation>

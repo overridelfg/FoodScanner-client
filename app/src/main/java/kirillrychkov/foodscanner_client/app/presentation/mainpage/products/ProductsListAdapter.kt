@@ -45,18 +45,18 @@ class ProductsListAdapter(): RecyclerView.Adapter<ProductViewHolder>() {
         }
 
         if(currentItem.Jpg.isBlank()){
-            Picasso.get().load(R.drawable.nopictures).into(holder.ivProduct);
+            Picasso.get().load(R.drawable.no_pictures).into(holder.ivProduct);
         }else{
             try{
                 Picasso.get().isLoggingEnabled = true
                 Picasso.get().load(currentItem.Jpg)
                     .placeholder(R.color.white)
-                    .error(R.drawable.nopictures)
+                    .error(R.drawable.no_pictures)
                     .fit()
                     .centerInside().
                     into(holder.ivProduct);
             }catch (e: Exception){
-                Picasso.get().load(R.drawable.nopictures).into(holder.ivProduct);
+                Picasso.get().load(R.drawable.no_pictures).into(holder.ivProduct);
             }
 
         }

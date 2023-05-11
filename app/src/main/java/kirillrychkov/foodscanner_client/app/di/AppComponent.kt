@@ -9,8 +9,10 @@ import kirillrychkov.foodscanner_client.app.presentation.SplashActivity
 import kirillrychkov.foodscanner_client.app.presentation.auth.LoginFragment
 import kirillrychkov.foodscanner_client.app.presentation.auth.RegisterFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeScannerFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.history.BarcodeScannerHistoryFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.favorites.FavoritesFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.details.ProductDetailsFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.AllergensListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.DietsListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.ProfileFragment
@@ -49,7 +51,9 @@ interface AppComponent{
 
     fun inject(favoritesFragment: FavoritesFragment)
 
+    fun inject(barcodeScannerHistoryFragment: BarcodeScannerHistoryFragment)
 
+    fun inject(productDetailsFragment: ProductDetailsFragment)
 
     @Component.Builder
     interface Builder {

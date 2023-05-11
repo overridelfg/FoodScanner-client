@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/product_details_navigation"
+    app:startDestination="@id/productDetailsFragment">
+
+    <fragment
+        android:id="@+id/productDetailsFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.products.details.ProductDetailsFragment"
+        android:label="ProductDetailsFragment" >
+        <action
+            android:id="@+id/action_productDetailsFragment_to_productRestrictionsDetailsFragment"
+            app:destination="@id/productRestrictionsDetailsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/productRestrictionsDetailsFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.products.details.ProductRestrictionsDetailsFragment"
+        android:label="ProductRestrictionsDetailsFragment" />
+</navigation>

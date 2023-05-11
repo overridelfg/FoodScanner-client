@@ -9,9 +9,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.domain.entity.Allergen
+import kirillrychkov.foodscanner_client.app.domain.entity.Diet
 import kirillrychkov.foodscanner_client.databinding.FragmentChooseAllergensBinding
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
@@ -22,7 +24,7 @@ class ChooseAllergensFragment : Fragment() {
 
     private lateinit var adapter: ChooseRestrictionsAdapter
     private var selectedAllergens: MutableList<Allergen> = mutableListOf()
-
+    private var selectedDiets: MutableList<Diet> = mutableListOf()
 
     private var _binding: FragmentChooseAllergensBinding? = null
     private val binding: FragmentChooseAllergensBinding
@@ -54,12 +56,21 @@ class ChooseAllergensFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeDietsList()
-        subscribeSelectedDiets()
+        subscribeSelectedAllergens()
         setupRecyclerView()
         setupSwipeToRefreshLayout()
+        subscribeUpdateRestrictions()
+        subscribeSelectedDiets()
         binding.nextButton.setOnClickListener {
+            val isUpdate: Boolean? = arguments?.getBoolean("UPDATE_RESTRICTIONS")
             viewModel.postSelectedAllergens(selectedAllergens)
-            findNavController().navigate(R.id.action_chooseAllergensFragment_to_registerFragment)
+            if(isUpdate != null){
+                viewModel.getSelectedDiets()
+                viewModel.updateRestrictions(selectedDiets, selectedAllergens)
+                findNavController().navigate(R.id.action_chooseAllergensFragmentUpdate_to_profileFragment)
+            }else{
+                findNavController().navigate(R.id.action_chooseAllergensFragment_to_registerFragment)
+            }
         }
         viewModel.getAllergensList()
     }
@@ -90,6 +101,29 @@ class ChooseAllergensFragment : Fragment() {
         }
     }
 
+    private fun subscribeUpdateRestrictions(){
+        viewModel.updateRestrictionsResult.observe(viewLifecycleOwner){
+            when (it) {
+                is ViewState.Success -> {
+                    binding.pbChooseAllergens.isVisible = false
+
+                }
+                is ViewState.Loading -> {
+                    binding.pbChooseAllergens.isVisible = true
+                }
+                is ViewState.Error -> {
+                    binding.pbChooseAllergens.isVisible = false
+                    Snackbar.make(
+                        requireView(),
+                        it.result.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+        }
+    }
+
     private fun setupSwipeToRefreshLayout(){
         binding.swipeLayout.setOnRefreshListener {
             binding.swipeLayout.isRefreshing = false
@@ -107,13 +141,29 @@ class ChooseAllergensFragment : Fragment() {
         adapter.onRestrictionUncheckListener = {
             selectedAllergens.remove(it as Allergen)
         }
+        adapter.onRestrictionInfoListener = {
+            val bundle = Bundle()
+            bundle.putString("HEADER", "Информация об аллергене")
+            bundle.putString("TITLE", it.title)
+            bundle.putString("DESCRIPTION", it.description)
+            findNavController().navigate(R.id.action_chooseAllergensFragment_to_restrictionInfoFragment, bundle)
+        }
+
         rvShopList.adapter = adapter
     }
 
-    private fun subscribeSelectedDiets(){
+    private fun subscribeSelectedAllergens(){
         viewModel.selectedAllergensList.observe(viewLifecycleOwner){
             adapter.selectedAllergens = it
             selectedAllergens = it
         }
     }
+
+    private fun subscribeSelectedDiets(){
+        viewModel.selectedDietsList.observe(viewLifecycleOwner){
+            selectedDiets = it
+        }
+    }
+
+
 }

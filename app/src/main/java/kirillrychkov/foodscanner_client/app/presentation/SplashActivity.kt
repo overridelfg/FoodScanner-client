@@ -1,5 +1,6 @@
 package kirillrychkov.foodscanner_client.app.presentation
 
+import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

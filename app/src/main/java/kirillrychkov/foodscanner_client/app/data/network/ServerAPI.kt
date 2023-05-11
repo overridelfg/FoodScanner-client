@@ -1,6 +1,8 @@
 package kirillrychkov.foodscanner_client.app.data.network
 
 import kirillrychkov.foodscanner_client.app.data.network.models.*
+import kirillrychkov.foodscanner_client.app.domain.entity.Diet
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -35,6 +37,23 @@ interface ServerAPI {
     suspend fun getAllergens(
     ) : List<AllergenDTO>
 
+    @GET("user/diets")
+    suspend fun getUserDiets(
+        @Header("Authorization") token: String
+    ) : Response<List<DietDTO>>
+
+    @GET("user/allergens")
+    suspend fun getUserAllergens(
+        @Header("Authorization") token: String
+    ) : Response<List<AllergenDTO>>
+
+    @POST("user/updateRestrictions")
+    suspend fun updateRestrictions(
+        @Header("Authorization") token: String,
+        @Body userRestrictionsDTO: UserRestrictionsDTO
+    ) : Response<String>
+
+
     @GET("products/details/{barcode}")
     suspend fun getProductDetails(
         @Header("Authorization") token: String,
@@ -68,4 +87,11 @@ interface ServerAPI {
     suspend fun getFavorites(
         @Header("Authorization") token: String
     ): Response<List<ProductDTO>>
+
+    @GET("products/barcodeScanHistory")
+    suspend fun getBarcodeScanHistory(
+        @Header("Authorization") token: String
+    ): Response<List<ProductDTO>>
+
+
 }

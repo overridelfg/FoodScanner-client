@@ -25,7 +25,7 @@
         android:text="Название"
         android:layout_marginTop="5dp"
         android:textColor="@color/white"
-        android:textSize="30sp"
+        android:textSize="25sp"
         android:gravity="start"
         android:layout_marginEnd="10dp"
         app:layout_constraintStart_toEndOf="@id/iv_restricted_details"

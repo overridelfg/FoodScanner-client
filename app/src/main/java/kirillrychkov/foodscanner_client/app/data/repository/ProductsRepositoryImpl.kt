@@ -177,6 +177,34 @@ class ProductsRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getBarcodeScanHistory(): OperationResult<List<Product>, String?> {
+        return withContext(Dispatchers.IO){
+            try{
+                val token = "Bearer " + prefsStorage.getUser()!!.accessToken
+                val response = apiService.getBarcodeScanHistory(token)
+                if (response.isSuccessful && response.body() != null){
+                    val result = response.body()!!.map {
+                        it.toProduct()
+                    }
+                    return@withContext OperationResult.Success(result)
+                }else if (response.errorBody() != null) {
+                    val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if(errorObj.getString("error") == "Token expired!"){
+                        refreshToken()
+                        getBarcodeScanHistory()
+                    }else{
+                        return@withContext OperationResult.Error(errorObj.getString("error"))
+                    }
+
+                } else {
+                    return@withContext OperationResult.Error("Что-то пошло не так!")
+                }
+            }catch (e: Exception){
+                return@withContext OperationResult.Error(e.message)
+            }
+        }
+    }
+
     private suspend fun refreshToken(){
         withContext(Dispatchers.IO) {
             var refreshToken = ""

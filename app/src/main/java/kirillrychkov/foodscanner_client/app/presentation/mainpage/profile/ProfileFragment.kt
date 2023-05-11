@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.domain.entity.Diet
@@ -58,6 +59,11 @@ class ProfileFragment : Fragment() {
         bindTabLayout()
         setUserData()
         bindLogoutButton()
+        binding.updateRestrictionsButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putBoolean("UPDATE_RESTRICTIONS", true)
+            findNavController().navigate(R.id.action_profileFragment_to_chooseDietsFragmentUpdate, bundle)
+        }
         super.onViewCreated(view, savedInstanceState)
     }
 

@@ -57,7 +57,7 @@ class ProductsListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this, viewModelFactory)[ProductsListViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity(), viewModelFactory)[ProductsListViewModel::class.java]
         _binding = FragmentProductsListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -70,10 +70,8 @@ class ProductsListFragment : Fragment() {
         setOnTextChange()
         subscribeAddFavoriteResult()
         setupSwipeToRefreshLayout()
-        subscribeGetProductRestrictionsDetails()
         viewModel.getProducts()
         subscribeGetProductsList()
-        viewModel.getProductRestrictionsDetails(10371)
     }
 
     private fun subscribeGetProductsList() {
@@ -127,13 +125,12 @@ class ProductsListFragment : Fragment() {
         rvProductsList.layoutManager = GridLayoutManager(requireContext(), 2)
         adapter = ProductsListAdapter()
         adapter.onProductSelectListener = {
-            viewModel.getProductRestrictionsDetails(it.id)
+            viewModel.sendProductDetails(it)
             val bottomSheetRoot = binding.bottomSheet.bottomSheetRoot
             val mBottomBehavior =
                 BottomSheetBehavior.from(bottomSheetRoot)
             mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             bottomSheetRoot.visibility = View.VISIBLE
-            fillProductListUI(it)
         }
         adapter.onProductFavoriteClickListener = {
             viewModel.addToFavorite(it)
@@ -160,28 +157,7 @@ class ProductsListFragment : Fragment() {
         }
     }
 
-    private fun subscribeGetProductRestrictionsDetails(){
-        viewModel.productDetails.observe(viewLifecycleOwner){
-            when (it) {
-                is ViewState.Success -> {
-                    binding.pbProductList.isVisible = false
-                    fillProductRestrictionUI(it.result)
-                }
-                is ViewState.Loading -> {
-                    binding.pbProductList.isVisible = true
-                }
-                is ViewState.Error -> {
-                    binding.pbProductList.isVisible = false
-                    Snackbar.make(
-                        requireView(),
-                        it.result.toString(),
-                        Snackbar.LENGTH_LONG
-                    ).setAction("OK") {
-                    }.show()
-                }
-            }
-        }
-    }
+
 
     private fun subscribeAddFavoriteResult(){
         viewModel.addToFavoriteResult.observe(viewLifecycleOwner){
@@ -205,67 +181,11 @@ class ProductsListFragment : Fragment() {
         }
     }
 
-    private fun fillProductRestrictionUI(productRestriction: ProductRestriction){
-        if(productRestriction.status == false){
-            val productRestrictionsSet = mutableSetOf<String>()
-            for(i in 0 until productRestriction.answer.size){
-                val el = productRestriction.answer[i].split(':')[1].split(',')
-                for(j in 0 until el.size){
-                    productRestrictionsSet.add(el[j])
-                }
-            }
-
-            binding.bottomSheet.tvRestrictedIngredients.text = "Запрещенные игредиенты: " +
-                    productRestrictionsSet.joinToString(", ")
-            binding.bottomSheet.tvRestrictedIngredients.isVisible = true
-            binding.bottomSheet.tvIsRestricted.text = "Продукт не подходит под ваши ограничения"
-            binding.bottomSheet.ivInfoIcon.isVisible = true
-            binding.bottomSheet.ivIsRestrictedIcon.setBackgroundResource(R.drawable.ic_restricted)
-            binding.bottomSheet.layoutIsRestricted.setBackgroundResource(R.drawable.background_restricted_layout)
-            binding.bottomSheet.ivInfoIcon.setOnClickListener {
-                val bundle = Bundle()
-                val answer = ArrayList(productRestriction.answer)
-                bundle.putStringArrayList("ANSWER", answer)
-                findNavController().navigate(R.id.action_productsListFragment_to_productRestrictionsDetailsFragment, bundle)
-            }
-
-        }else{
-            binding.bottomSheet.tvRestrictedIngredients.isVisible = false
-            binding.bottomSheet.ivInfoIcon.isVisible = false
-            binding.bottomSheet.tvIsRestricted.text = "Продукт подходит под ваши ограничения"
-            binding.bottomSheet.ivIsRestrictedIcon.setBackgroundResource(R.drawable.ic_check_circle)
-            binding.bottomSheet.layoutIsRestricted.setBackgroundResource(R.drawable.background_not_restricted_layout)
-        }
-
+    override fun onPause() {
+        super.onPause()
     }
-    private fun fillProductListUI(product: Product){
 
-        val productWeight = product.Weight.replace("\\s".toRegex(), "")
-        binding.bottomSheet.tvProductTitle.text = product.Name + " " + productWeight
-        binding.bottomSheet.tvProductIngredients.text =
-            "Ингредиенты:" + " " + product.Description
-        binding.bottomSheet.tvProteins.text =
-            "Белки " + "\n" + product.Proteins
-        binding.bottomSheet.tvFats.text =
-            "Жиры" + "\n" + product.Fats
-        binding.bottomSheet.tvCarbohydrates.text =
-            "Углеводы" + "\n" + product.Carbohydrates
-        if(product.Jpg.isBlank()){
-            Picasso.get().load(R.drawable.no_pictures).into(binding.bottomSheet.ivProductImg);
-        }else{
-            try{
-                Picasso.get().isLoggingEnabled = true
-                Picasso.get().load(product.Jpg)
-                    .placeholder(R.color.white)
-                    .error(R.drawable.no_pictures)
-                    .fit()
-                    .centerInside().
-                    into(binding.bottomSheet.ivProductImg);
-            }catch (e: Exception){
-                Picasso.get().load(R.drawable.no_pictures).into(binding.bottomSheet.ivProductImg)
-            }
-        }
-    }
+
     private fun setOnTextChange() {
         binding.etSearchProduct.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
