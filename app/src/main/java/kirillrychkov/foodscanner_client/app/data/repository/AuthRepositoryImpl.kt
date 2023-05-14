@@ -33,9 +33,7 @@ class AuthRepositoryImpl @Inject constructor(
                             name = result.name,
                             email = result.email,
                             accessToken = result.accessToken,
-                            refreshToken = result.refreshToken,
-                            diets = result.diets,
-                            allergens = result.allergens
+                            refreshToken = result.refreshToken
                         )
                     )
                     return@withContext OperationResult.Success(result)
@@ -65,10 +63,10 @@ class AuthRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val dietsList = diets.map {
-                    DietDTO(it.id, it.title, it.description, it.restrictedIngredients)
+                    DietDTO(it.id, it.title, it.description)
                 }
                 val allergensList = allergens.map {
-                    AllergenDTO(it.id, it.title, it.description, it.restrictedIngredients)
+                    AllergenDTO(it.id, it.title, it.description)
                 }
                 val response = apiService.register(
                     RegisterRequestDTO(
@@ -87,9 +85,7 @@ class AuthRepositoryImpl @Inject constructor(
                             name = result.name,
                             email = result.email,
                             accessToken = result.accessToken,
-                            refreshToken = result.refreshToken,
-                            diets = result.diets,
-                            allergens = result.allergens
+                            refreshToken = result.refreshToken
                         )
                     )
                     return@withContext OperationResult.Success(result)

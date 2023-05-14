@@ -20,6 +20,7 @@ import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.presentation.MainActivity
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
+import kirillrychkov.foodscanner_client.app.presentation.restrictions.ChooseRestrictionsViewModel
 import javax.inject.Inject
 
 class RegisterFragment : Fragment() {
@@ -32,8 +33,6 @@ class RegisterFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    @Inject
-    lateinit var chooseRestrictionsRepository: ChooseRestrictionsRepository
 
     private val component by lazy{
         FoodScannerApp.appComponent
@@ -49,7 +48,7 @@ class RegisterFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity(), viewModelFactory)[AuthViewModel::class.java]
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -68,15 +67,18 @@ class RegisterFragment : Fragment() {
             val email = binding.emailEditText.text.toString()
             val username = binding.usernameEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
-            val diets = chooseRestrictionsRepository.getSelectedDiets()
-            val allergens = chooseRestrictionsRepository.getSelectedAllergens()
-            viewModel.register(email, password, username, diets!!, allergens!!)
+            val diets = viewModel.getSelectedDiets() ?: mutableListOf()
+            val allergens = viewModel.getSelectedAllergens() ?: mutableListOf()
+            Log.d("AA", diets.toString())
+            Log.d("BB", allergens.toString())
+            viewModel.register(email, password, username, diets, allergens)
         }
     }
 
     private fun launchLoginFragment(){
         binding.signInButton.setOnClickListener {
-            chooseRestrictionsRepository.removeSelectedRestrictions()
+            viewModel.setSelectedAllergens(mutableListOf())
+            viewModel.setSelectedDiets(mutableListOf())
             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
     }

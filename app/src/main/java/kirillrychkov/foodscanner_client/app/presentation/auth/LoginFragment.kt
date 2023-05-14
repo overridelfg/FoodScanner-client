@@ -46,7 +46,7 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity(), viewModelFactory)[AuthViewModel::class.java]
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }

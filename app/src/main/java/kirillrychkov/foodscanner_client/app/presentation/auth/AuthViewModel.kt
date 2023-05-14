@@ -37,6 +37,14 @@ class AuthViewModel @Inject constructor(
     val errorInputUsername: LiveData<AuthFormErrorState>
         get() = _errorInputUsername
 
+    private val _selectedDietsList = MutableLiveData<MutableList<Diet>>(mutableListOf())
+    val selectedDietsList : LiveData<MutableList<Diet>>
+        get() = _selectedDietsList
+
+    private val _selectedAllergensList = MutableLiveData<MutableList<Allergen>>(mutableListOf())
+    val selectedAllergensList : LiveData<MutableList<Allergen>>
+        get() = _selectedAllergensList
+
     fun login(email: String, password: String) {
         val fieldValid = validateLoginInput(email, password)
         if (fieldValid) {
@@ -70,6 +78,23 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
+    fun setSelectedDiets(selectedDiets: MutableList<Diet>){
+        _selectedDietsList.value = selectedDiets
+    }
+
+    fun getSelectedDiets() : MutableList<Diet>? {
+        return selectedDietsList.value
+    }
+
+    fun getSelectedAllergens() : MutableList<Allergen>?{
+        return selectedAllergensList.value
+    }
+
+    fun setSelectedAllergens(selectedAllergens: MutableList<Allergen>){
+        _selectedAllergensList.value = selectedAllergens
+    }
+
     private fun validateLoginInput(email: String, password: String): Boolean {
         val emailValid = validateEmailInput(email)
         val passwordValid = validatePasswordInput(password)

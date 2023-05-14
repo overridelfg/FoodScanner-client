@@ -15,12 +15,6 @@ fun LoginResponseDTO.toUser() : User{
         email = user.email,
         name = user.name,
         accessToken = accessToken,
-        refreshToken = refreshToken,
-        diets = user.diets.map {
-            it.toDiet()
-        },
-        allergens = user.allergens.map {
-            it.toAllergen()
-        }
+        refreshToken = refreshToken
     )
 }

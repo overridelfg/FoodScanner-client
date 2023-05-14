@@ -59,32 +59,4 @@ class ChooseRestrictionsRepositoryImpl @Inject constructor(
 //        }
 //    }
 
-    override fun postSelectedDiets(listOfDiets : List<Diet>) {
-        prefsStorage.saveListOfDiets(listOfDiets)
-    }
-
-    override fun postSelectedAllergens(listOfAllergens : List<Allergen>) {
-        prefsStorage.saveListOfAllergens(listOfAllergens)
-    }
-
-    override fun getSelectedDiets(): MutableList<Diet>? {
-        if (prefsStorage.getListOfDiets() == null){
-            return mutableListOf()
-        } else{
-            return prefsStorage.getListOfDiets()
-        }
-    }
-
-    override fun getSelectedAllergens(): MutableList<Allergen>? {
-        if (prefsStorage.getListOfAllergens() == null){
-            return mutableListOf()
-        } else{
-            return prefsStorage.getListOfAllergens()
-        }
-    }
-
-    override fun removeSelectedRestrictions() {
-        prefsStorage.saveListOfDiets(null)
-        prefsStorage.saveListOfAllergens(null)
-    }
 }

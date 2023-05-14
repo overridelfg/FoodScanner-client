@@ -3,7 +3,6 @@ package kirillrychkov.foodscanner_client.app.di
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import kirillrychkov.foodscanner_client.app.domain.repository.ProductsRepository
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.SplashActivity
 import kirillrychkov.foodscanner_client.app.presentation.auth.LoginFragment
@@ -13,12 +12,13 @@ import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.hi
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.favorites.FavoritesFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.details.ProductDetailsFragment
-import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.AllergensListFragment
-import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.DietsListFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.restrictionslist.AllergensListFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.restrictionslist.DietsListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.ProfileFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.update.UpdateAllergensFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.update.UpdateDietsFragment
 import kirillrychkov.foodscanner_client.app.presentation.restrictions.ChooseAllergensFragment
 import kirillrychkov.foodscanner_client.app.presentation.restrictions.ChooseDietsFragment
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
@@ -54,6 +54,10 @@ interface AppComponent{
     fun inject(barcodeScannerHistoryFragment: BarcodeScannerHistoryFragment)
 
     fun inject(productDetailsFragment: ProductDetailsFragment)
+
+    fun inject(updateDietsFragment: UpdateDietsFragment)
+
+    fun inject(updateAllergensFragment: UpdateAllergensFragment)
 
     @Component.Builder
     interface Builder {

@@ -18,18 +18,19 @@ import kirillrychkov.foodscanner_client.databinding.FragmentChooseAllergensBindi
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
+import kirillrychkov.foodscanner_client.app.presentation.auth.AuthViewModel
 import javax.inject.Inject
 
 class ChooseAllergensFragment : Fragment() {
 
     private lateinit var adapter: ChooseRestrictionsAdapter
     private var selectedAllergens: MutableList<Allergen> = mutableListOf()
-    private var selectedDiets: MutableList<Diet> = mutableListOf()
 
     private var _binding: FragmentChooseAllergensBinding? = null
     private val binding: FragmentChooseAllergensBinding
         get() = _binding ?: throw RuntimeException("FragmentChooseAllergensBinding == null")
     private lateinit var viewModel: ChooseRestrictionsViewModel
+    private lateinit var authViewModel: AuthViewModel
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -49,6 +50,7 @@ class ChooseAllergensFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel = ViewModelProvider(this, viewModelFactory)[ChooseRestrictionsViewModel::class.java]
+        authViewModel = ViewModelProvider(requireActivity(), viewModelFactory)[AuthViewModel::class.java]
         _binding = FragmentChooseAllergensBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -59,19 +61,9 @@ class ChooseAllergensFragment : Fragment() {
         subscribeSelectedAllergens()
         setupRecyclerView()
         setupSwipeToRefreshLayout()
-        subscribeUpdateRestrictions()
-        subscribeSelectedDiets()
         binding.nextButton.setOnClickListener {
-            val isUpdate: Boolean? = arguments?.getBoolean("UPDATE_RESTRICTIONS")
-            viewModel.postSelectedAllergens(selectedAllergens)
-            if(isUpdate != null){
-                viewModel.getSelectedDiets()
-                viewModel.updateRestrictions(selectedDiets, selectedAllergens)
-                findNavController().navigate(R.id.action_chooseAllergensFragmentUpdate_to_profileFragment)
-            }else{
                 findNavController().navigate(R.id.action_chooseAllergensFragment_to_registerFragment)
             }
-        }
         viewModel.getAllergensList()
     }
 
@@ -101,28 +93,27 @@ class ChooseAllergensFragment : Fragment() {
         }
     }
 
-    private fun subscribeUpdateRestrictions(){
-        viewModel.updateRestrictionsResult.observe(viewLifecycleOwner){
-            when (it) {
-                is ViewState.Success -> {
-                    binding.pbChooseAllergens.isVisible = false
-
-                }
-                is ViewState.Loading -> {
-                    binding.pbChooseAllergens.isVisible = true
-                }
-                is ViewState.Error -> {
-                    binding.pbChooseAllergens.isVisible = false
-                    Snackbar.make(
-                        requireView(),
-                        it.result.toString(),
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                }
-            }
-
-        }
-    }
+//    private fun subscribeUpdateRestrictions(){
+//        viewModel.updateRestrictionsResult.observe(viewLifecycleOwner){
+//            when (it) {
+//                is ViewState.Success -> {
+//                    binding.pbChooseAllergens.isVisible = false
+//                }
+//                is ViewState.Loading -> {
+//                    binding.pbChooseAllergens.isVisible = true
+//                }
+//                is ViewState.Error -> {
+//                    binding.pbChooseAllergens.isVisible = false
+//                    Snackbar.make(
+//                        requireView(),
+//                        it.result.toString(),
+//                        Snackbar.LENGTH_LONG
+//                    ).show()
+//                }
+//            }
+//
+//        }
+//    }
 
     private fun setupSwipeToRefreshLayout(){
         binding.swipeLayout.setOnRefreshListener {
@@ -134,12 +125,14 @@ class ChooseAllergensFragment : Fragment() {
     private fun setupRecyclerView(){
         val rvShopList = binding.rvRestrictionsList
         adapter = ChooseRestrictionsAdapter()
-        viewModel.getSelectedAllergens()
+        authViewModel.getSelectedAllergens()
         adapter.onRestrictionCheckListener = {
             selectedAllergens.add(it as Allergen)
+            authViewModel.setSelectedAllergens(selectedAllergens)
         }
         adapter.onRestrictionUncheckListener = {
             selectedAllergens.remove(it as Allergen)
+            authViewModel.setSelectedAllergens(selectedAllergens)
         }
         adapter.onRestrictionInfoListener = {
             val bundle = Bundle()
@@ -153,17 +146,17 @@ class ChooseAllergensFragment : Fragment() {
     }
 
     private fun subscribeSelectedAllergens(){
-        viewModel.selectedAllergensList.observe(viewLifecycleOwner){
-            adapter.selectedAllergens = it
-            selectedAllergens = it
+        authViewModel.selectedAllergensList.observe(viewLifecycleOwner){
+            if(it.isEmpty()){
+                binding.nextButton.text = "Пропустить"
+            }else{
+                binding.nextButton.text = "Далее"
+                adapter.selectedAllergens = it
+                selectedAllergens = it
+            }
         }
     }
 
-    private fun subscribeSelectedDiets(){
-        viewModel.selectedDietsList.observe(viewLifecycleOwner){
-            selectedDiets = it
-        }
-    }
 
 
 }

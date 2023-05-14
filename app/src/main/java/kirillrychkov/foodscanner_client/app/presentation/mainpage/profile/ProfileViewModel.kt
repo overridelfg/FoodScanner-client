@@ -34,6 +34,14 @@ class ProfileViewModel @Inject constructor(
     val userAllergens : LiveData<ViewState<List<Allergen>, String?>>
         get() = _userAllergens
 
+    private val _userSelectedDiets = MutableLiveData<List<Diet>>(mutableListOf())
+    val userSelectedDiets : LiveData<List<Diet>>
+        get() = _userSelectedDiets
+
+    private val _userSelectedAllergens = MutableLiveData<List<Allergen>>(mutableListOf())
+    val userSelectedAllergens : LiveData<List<Allergen>>
+        get() = _userSelectedAllergens
+
 
 
     fun getUserDiets(){
@@ -58,6 +66,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun sendUserSelectedDiets(diets: List<Diet>){
+        _userSelectedDiets.value = diets
+    }
 
-
+    fun sendUserSelectedAllergens(allergens: List<Allergen>){
+        _userSelectedAllergens.value = allergens
+    }
 }

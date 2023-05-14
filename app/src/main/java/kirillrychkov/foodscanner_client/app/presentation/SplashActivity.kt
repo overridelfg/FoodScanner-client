@@ -15,9 +15,6 @@ class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var authRepository: AuthRepository
 
-    @Inject
-    lateinit var chooseRestrictionsRepository: ChooseRestrictionsRepository
-
     private val component by lazy{
         FoodScannerApp.appComponent
     }
@@ -36,7 +33,6 @@ class SplashActivity : AppCompatActivity() {
 //        finish()
         if(savedInstanceState == null){
             if(authRepository.getUser() == null){
-                chooseRestrictionsRepository.removeSelectedRestrictions()
                 val intent = AuthActivity.newIntentAuthActivity(this)
                 startActivity(intent)
                 finish()

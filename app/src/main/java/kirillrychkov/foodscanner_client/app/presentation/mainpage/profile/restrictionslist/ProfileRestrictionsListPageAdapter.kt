@@ -1,4 +1,4 @@
-package kirillrychkov.foodscanner_client.app.presentation.mainpage.profile
+package kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.restrictionslist
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter

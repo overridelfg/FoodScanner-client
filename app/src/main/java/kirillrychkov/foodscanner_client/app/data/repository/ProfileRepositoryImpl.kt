@@ -80,15 +80,15 @@ class ProfileRepositoryImpl @Inject constructor(
             try{
                 val token = "Bearer " + prefsStorage.getUser()!!.accessToken
                 val dietsList = diets.map {
-                    DietDTO(it.id, it.title, it.description, it.restrictedIngredients)
+                    DietDTO(it.id, it.title, it.description)
                 }
                 val allergensList = allergens.map {
-                    AllergenDTO(it.id, it.title, it.description, it.restrictedIngredients)
+                    AllergenDTO(it.id, it.title, it.description)
                 }
 
                 val response = apiService.updateRestrictions(token, UserRestrictionsDTO(dietsList, allergensList))
                 if (response.isSuccessful && response.body() != null){
-                    val result = response.body()!!
+                    val result = response.body()!!.message
                     return@withContext OperationResult.Success(result)
                 }else if (response.errorBody() != null) {
                     val errorObj = JSONObject(response.errorBody()!!.charStream().readText())

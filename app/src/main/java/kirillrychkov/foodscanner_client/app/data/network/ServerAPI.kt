@@ -51,7 +51,7 @@ interface ServerAPI {
     suspend fun updateRestrictions(
         @Header("Authorization") token: String,
         @Body userRestrictionsDTO: UserRestrictionsDTO
-    ) : Response<String>
+    ) : Response<SuccessResponseDTO>
 
 
     @GET("products/details/{barcode}")

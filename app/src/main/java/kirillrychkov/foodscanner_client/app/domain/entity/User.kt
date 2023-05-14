@@ -5,8 +5,6 @@ data class User(
     val email: String,
     val name: String,
     val accessToken: String,
-    val refreshToken: String,
-    val diets: List<Diet>,
-    val allergens: List<Allergen>
+    val refreshToken: String
 ) {
 }

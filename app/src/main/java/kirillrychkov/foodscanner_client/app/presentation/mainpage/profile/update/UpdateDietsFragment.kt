@@ -1,45 +1,47 @@
-package kirillrychkov.foodscanner_client.app.presentation.restrictions
+package kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.update
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kirillrychkov.foodscanner_client.R
-import kirillrychkov.foodscanner_client.databinding.FragmentChooseDietsBinding
+import kirillrychkov.foodscanner_client.app.domain.entity.Allergen
 import kirillrychkov.foodscanner_client.app.domain.entity.Diet
-import kirillrychkov.foodscanner_client.app.domain.repository.AuthRepository
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
 import kirillrychkov.foodscanner_client.app.presentation.auth.AuthViewModel
+import kirillrychkov.foodscanner_client.app.presentation.restrictions.ChooseRestrictionsAdapter
+import kirillrychkov.foodscanner_client.app.presentation.restrictions.ChooseRestrictionsViewModel
+import kirillrychkov.foodscanner_client.app.presentation.restrictions.RestrictionInfoFragment
+import kirillrychkov.foodscanner_client.databinding.FragmentChooseDietsBinding
+import kirillrychkov.foodscanner_client.databinding.FragmentUpdateDietsBinding
 import javax.inject.Inject
 
+private const val ARG_SELECTED_DIETS = "SELECTED_DIETS"
+private const val ARG_SELECTED_ALLERGENS = "SELECTED_ALLERGENS"
 
-class ChooseDietsFragment : Fragment() {
+class UpdateDietsFragment : Fragment() {
+    private var selectedDiets: ArrayList<Diet> = arrayListOf()
+    private var selectedAllergens: ArrayList<Allergen> = arrayListOf()
+    private var currentSelectedDiets: MutableList<Diet> = mutableListOf()
 
-    private var _binding: FragmentChooseDietsBinding? = null
-    private val binding: FragmentChooseDietsBinding
-        get() = _binding ?: throw RuntimeException("FragmentChooseDietsBinding == null")
-    private lateinit var viewModel: ChooseRestrictionsViewModel
-    private lateinit var authViewModel: AuthViewModel
+    private var _binding: FragmentUpdateDietsBinding? = null
+    private val binding: FragmentUpdateDietsBinding
+        get() = _binding ?: throw RuntimeException("FragmentUpdateDietsBinding == null")
+
+    private lateinit var viewModel: UpdateRestrictionsViewModel
 
     private lateinit var adapter: ChooseRestrictionsAdapter
-    private var selectedDiets: MutableList<Diet> = mutableListOf()
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
-    @Inject
-    lateinit var authRepository: AuthRepository
 
     private val component by lazy {
         FoodScannerApp.appComponent
@@ -50,27 +52,41 @@ class ChooseDietsFragment : Fragment() {
         super.onAttach(context)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        selectedDiets = requireArguments().getParcelableArrayList(ARG_SELECTED_DIETS)!!
+        selectedAllergens = requireArguments().getParcelableArrayList(ARG_SELECTED_ALLERGENS)!!
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         viewModel =
-            ViewModelProvider(this, viewModelFactory)[ChooseRestrictionsViewModel::class.java]
-        authViewModel =
-            ViewModelProvider(requireActivity(), viewModelFactory)[AuthViewModel::class.java]
-        _binding = FragmentChooseDietsBinding.inflate(inflater, container, false)
+            ViewModelProvider(
+                requireActivity(),
+                viewModelFactory
+            )[UpdateRestrictionsViewModel::class.java]
+        _binding = FragmentUpdateDietsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.setSelectedDiets(selectedDiets)
         subscribeDietsList()
         viewModel.getDietsList()
         setupRecyclerView()
         setupSwipeToRefreshLayout()
         subscribeGetSelectedDiets()
-        launchChooseAllergensFragment()
+        val fragment = UpdateAllergensFragment.newInstance(selectedAllergens)
+        binding.nextButton.setOnClickListener {
+            requireActivity().supportFragmentManager
+                .beginTransaction()
+                .addToBackStack("update_restrictions")
+                .add(R.id.update_restrictions_container, fragment)
+                .commit()
+        }
     }
 
     private fun subscribeDietsList() {
@@ -105,20 +121,14 @@ class ChooseDietsFragment : Fragment() {
         }
     }
 
-    private fun launchChooseAllergensFragment() {
-        binding.nextButton.setOnClickListener {
-            findNavController().navigate(R.id.action_chooseDietsFragment_to_chooseAllergensFragment)
-        }
-    }
-
     private fun subscribeGetSelectedDiets() {
-        authViewModel.selectedDietsList.observe(viewLifecycleOwner) {
+        viewModel.selectedDietsList.observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
                 binding.nextButton.text = "Пропустить"
             } else {
                 binding.nextButton.text = "Далее"
                 adapter.selectedDiets = it
-                selectedDiets = it
+                currentSelectedDiets = it
             }
 
         }
@@ -127,14 +137,14 @@ class ChooseDietsFragment : Fragment() {
     private fun setupRecyclerView() {
         val rvShopList = binding.rvRestrictionsList
         adapter = ChooseRestrictionsAdapter()
-        authViewModel.getSelectedDiets()
+        viewModel.getSelectedDiets()
         adapter.onRestrictionCheckListener = {
             selectedDiets.add(it as Diet)
-            authViewModel.setSelectedDiets(selectedDiets)
+            viewModel.setSelectedDiets(selectedDiets)
         }
         adapter.onRestrictionUncheckListener = {
             selectedDiets.remove(it as Diet)
-            authViewModel.setSelectedDiets(selectedDiets)
+            viewModel.setSelectedDiets(selectedDiets)
         }
 
         adapter.onRestrictionInfoListener = {
@@ -142,12 +152,21 @@ class ChooseDietsFragment : Fragment() {
             bundle.putString("HEADER", "Информация о диете")
             bundle.putString("TITLE", it.title)
             bundle.putString("DESCRIPTION", it.description)
-            findNavController().navigate(
-                R.id.action_chooseDietsFragment_to_restrictionInfoFragment,
-                bundle
-            )
+            val fragment = RestrictionInfoFragment()
+            fragment.arguments = bundle
+            fragment.show(requireActivity().supportFragmentManager, "Dialog")
         }
         rvShopList.adapter = adapter
     }
 
+    companion object {
+        @JvmStatic
+        fun newInstance(selectedDiets: ArrayList<Diet>, selectedAllergens: ArrayList<Allergen>) =
+            UpdateDietsFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList(ARG_SELECTED_DIETS, selectedDiets)
+                    putParcelableArrayList(ARG_SELECTED_ALLERGENS, selectedAllergens)
+                }
+            }
+    }
 }

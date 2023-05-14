@@ -17,9 +17,6 @@
         <action
             android:id="@+id/action_barcodeScannerFragment_to_productRestrictionsDetailsFragment"
             app:destination="@id/productRestrictionsDetailsFragment" />
-        <action
-            android:id="@+id/action_barcodeScannerFragment_to_barcodeProductDetailsFragment"
-            app:destination="@id/barcodeProductDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -29,6 +26,9 @@
         <action
             android:id="@+id/action_profileFragment_to_chooseDietsFragmentUpdate"
             app:destination="@id/chooseDietsFragmentUpdate" />
+        <action
+            android:id="@+id/action_profileFragment_to_restrictionInfoFragment2"
+            app:destination="@id/restrictionInfoFragment2" />
     </fragment>
     <fragment
         android:id="@+id/productsListFragment"
@@ -69,10 +69,9 @@
             android:id="@+id/action_chooseAllergensFragmentUpdate_to_chooseDietsFragmentUpdate"
             app:destination="@id/chooseDietsFragmentUpdate" />
     </fragment>
-    <fragment
-        android:id="@+id/barcodeProductDetailsFragment"
-        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeProductDetailsFragment"
-        android:label="fragment_barcode_product_details"
-        tools:layout="@layout/fragment_barcode_product_details" />
+    <dialog
+        android:id="@+id/restrictionInfoFragment2"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.restrictions.RestrictionInfoFragment"
+        android:label="RestrictionInfoFragment" />
 
 </navigation>

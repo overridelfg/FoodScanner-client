@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1B1B1B"
-    tools:context=".app.presentation.mainpage.profile.DietsListFragment">
+    tools:context=".app.presentation.mainpage.profile.restrictionslist.DietsListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_diets_list"

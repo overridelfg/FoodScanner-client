@@ -4,5 +4,4 @@ abstract class Restriction {
     abstract val id: Int
     abstract val title: String
     abstract val description: String
-    abstract val restrictedIngredients: List<String>
 }

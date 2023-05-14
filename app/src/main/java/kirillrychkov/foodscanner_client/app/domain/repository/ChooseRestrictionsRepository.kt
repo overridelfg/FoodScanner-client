@@ -11,14 +11,4 @@ interface ChooseRestrictionsRepository {
     suspend fun getAllergens(): OperationResult<List<Allergen>, String?>
 
     fun getIngredients(): OperationResult<List<Ingredient>, String?>
-
-    fun postSelectedDiets(listOfDiets : List<Diet>)
-
-    fun postSelectedAllergens(listOfAllergens : List<Allergen>)
-
-    fun getSelectedDiets() : MutableList<Diet>?
-
-    fun getSelectedAllergens() : MutableList<Allergen>?
-
-    fun removeSelectedRestrictions()
 }

@@ -1,4 +1,4 @@
-package kirillrychkov.foodscanner_client.app.presentation.mainpage.profile
+package kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.restrictionslist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ class ProfileRestrictionsAdapter : RecyclerView.Adapter<ProfileRestrictionsViewH
             field = value
             notifyDataSetChanged()
         }
-
+    var onRestrictionInfoListener: ((Restriction) -> Unit)? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -26,6 +26,9 @@ class ProfileRestrictionsAdapter : RecyclerView.Adapter<ProfileRestrictionsViewH
     override fun onBindViewHolder(holder: ProfileRestrictionsViewHolder, position: Int) {
         val currentItem = restrictionsList[position]
         holder.tvTitle.text = currentItem.title
+        holder.buttonInfo.setOnClickListener {
+            onRestrictionInfoListener?.invoke(currentItem)
+        }
     }
 
     override fun getItemCount(): Int {
