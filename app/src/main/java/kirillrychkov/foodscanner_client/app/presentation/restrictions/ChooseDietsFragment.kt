@@ -71,6 +71,9 @@ class ChooseDietsFragment : Fragment() {
         setupSwipeToRefreshLayout()
         subscribeGetSelectedDiets()
         launchChooseAllergensFragment()
+        binding.errorButton.setOnClickListener {
+            viewModel.getDietsList()
+        }
     }
 
     private fun subscribeDietsList() {
@@ -80,6 +83,9 @@ class ChooseDietsFragment : Fragment() {
                     binding.pbChooseDiets.isVisible = false
                     binding.nextButton.isEnabled = true
                     adapter.restrictionsList = it.result
+                    binding.errorButton.isVisible = false
+                    binding.errorImage.isVisible = false
+                    binding.errorTxt.isVisible = false
                 }
                 is ViewState.Loading -> {
                     binding.nextButton.isEnabled = false
@@ -88,11 +94,11 @@ class ChooseDietsFragment : Fragment() {
                 is ViewState.Error -> {
                     binding.nextButton.isEnabled = false
                     binding.pbChooseDiets.isVisible = false
-                    Snackbar.make(
-                        requireView(),
-                        it.result.toString(),
-                        Snackbar.LENGTH_LONG
-                    ).show()
+                    if(it.result == "Network is unreachable"){
+                        binding.errorButton.isVisible = true
+                        binding.errorImage.isVisible = true
+                        binding.errorTxt.isVisible = true
+                    }
                 }
             }
         }

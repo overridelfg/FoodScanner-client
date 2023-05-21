@@ -4,6 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.*
+import kirillrychkov.foodscanner_client.app.data.PrefsStorage
+import kirillrychkov.foodscanner_client.app.data.network.ProductsListPageSource
+import kirillrychkov.foodscanner_client.app.data.network.ServerAPI
 import kirillrychkov.foodscanner_client.app.domain.OperationResult
 import kirillrychkov.foodscanner_client.app.domain.entity.Product
 import kirillrychkov.foodscanner_client.app.domain.entity.ProductRestriction
@@ -11,6 +15,10 @@ import kirillrychkov.foodscanner_client.app.domain.entity.SuccessResponse
 import kirillrychkov.foodscanner_client.app.domain.usecase.products.*
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,8 +27,19 @@ class ProductsListViewModel @Inject constructor(
     val getProductsBySearchUseCase: GetProductsBySearchUseCase,
     val getProductRestrictionsDetailsUseCase: GetProductRestrictionsDetailsUseCase,
     val addToFavoriteUseCase: AddToFavoriteUseCase,
-    val getFavoritesUseCase: GetFavoritesUseCase
+    val getFavoritesUseCase: GetFavoritesUseCase,
+    val apiService: ServerAPI,
+    val prefsStorage: PrefsStorage
 ) : ViewModel() {
+
+    val productsDataList: Flow<PagingData<Product>> = Pager<Int, Product>(
+        PagingConfig(
+            pageSize = 10,
+            enablePlaceholders = false,
+        )
+    ){
+        ProductsListPageSource(apiService, prefsStorage)
+    }.flow.cachedIn(viewModelScope)
 
     private val _productsList = MutableLiveData<ViewState<List<Product>, String?>>()
     val productsList : LiveData<ViewState<List<Product>, String?>>

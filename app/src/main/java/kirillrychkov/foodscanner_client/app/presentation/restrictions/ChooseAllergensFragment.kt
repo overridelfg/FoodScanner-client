@@ -65,6 +65,10 @@ class ChooseAllergensFragment : Fragment() {
                 findNavController().navigate(R.id.action_chooseAllergensFragment_to_registerFragment)
             }
         viewModel.getAllergensList()
+
+        binding.errorButton.setOnClickListener {
+            viewModel.getAllergensList()
+        }
     }
 
     private fun subscribeDietsList(){
@@ -73,6 +77,9 @@ class ChooseAllergensFragment : Fragment() {
                 is ViewState.Success -> {
                     binding.nextButton.isEnabled = true
                     binding.pbChooseAllergens.isVisible = false
+                    binding.errorButton.isVisible = false
+                    binding.errorImage.isVisible = false
+                    binding.errorTxt.isVisible = false
                     adapter.restrictionsList = it.result
                 }
                 is ViewState.Loading -> {
@@ -82,11 +89,11 @@ class ChooseAllergensFragment : Fragment() {
                 is ViewState.Error -> {
                     binding.nextButton.isEnabled = false
                     binding.pbChooseAllergens.isVisible = false
-                    Snackbar.make(
-                        requireView(),
-                        it.result.toString(),
-                        Snackbar.LENGTH_LONG
-                    ).show()
+                    if(it.result == "Network is unreachable"){
+                        binding.errorButton.isVisible = true
+                        binding.errorImage.isVisible = true
+                        binding.errorTxt.isVisible = true
+                    }
                 }
             }
 

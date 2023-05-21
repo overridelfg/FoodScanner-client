@@ -9,6 +9,7 @@ import kirillrychkov.foodscanner_client.app.domain.entity.Diet
 import kirillrychkov.foodscanner_client.app.domain.repository.ProfileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okio.IOException
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -38,6 +39,9 @@ class ProfileRepositoryImpl @Inject constructor(
                     return@withContext OperationResult.Error("Что-то пошло не так!")
                 }
             }
+            catch (e: IOException){
+                return@withContext OperationResult.Error(e.cause?.message.toString())
+            }
             catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)
             }
@@ -65,6 +69,9 @@ class ProfileRepositoryImpl @Inject constructor(
                 } else {
                     return@withContext OperationResult.Error("Что-то пошло не так!")
                 }
+            }
+            catch (e: IOException){
+                return@withContext OperationResult.Error(e.cause?.message.toString())
             }
             catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)

@@ -87,18 +87,69 @@
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+        <include
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/bottom_sheet"
+            layout="@layout/bottom_sheet_product_details" />
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/coordinatorLayout"
+        <ImageView
+            android:id="@+id/error_image"
+            android:text="Попробуйте еще раз"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/ic_baseline_wifi_off_24"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/error_txt"
+            android:text="Попробуйте еще раз"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/error_image" />
 
-            <include
-                android:id="@+id/bottom_sheet"
-                layout="@layout/bottom_sheet_product_details" />
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/error_button"
+            android:text="Повторить"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:drawableEnd="@drawable/ic_baseline_autorenew_24"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/white"
+            android:padding="15dp"
+            android:visibility="gone"
+            android:backgroundTint="@color/main_blue"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/error_txt"
+            />
 
         <ProgressBar
             android:id="@+id/pb_product_list"

@@ -69,8 +69,12 @@ class RegisterFragment : Fragment() {
             val password = binding.passwordEditText.text.toString()
             val diets = viewModel.getSelectedDiets() ?: mutableListOf()
             val allergens = viewModel.getSelectedAllergens() ?: mutableListOf()
-            Log.d("AA", diets.toString())
-            Log.d("BB", allergens.toString())
+            diets.sortBy {
+                it.id
+            }
+            allergens.sortBy {
+                it.id
+            }
             viewModel.register(email, password, username, diets, allergens)
         }
     }

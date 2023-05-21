@@ -11,7 +11,9 @@ import kirillrychkov.foodscanner_client.app.domain.entity.SuccessResponse
 import kirillrychkov.foodscanner_client.app.domain.repository.ProductsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okio.IOException
 import org.json.JSONObject
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class ProductsRepositoryImpl @Inject constructor(
@@ -28,6 +30,9 @@ class ProductsRepositoryImpl @Inject constructor(
                     return@withContext OperationResult.Success(result)
                 }else if (response.errorBody() != null) {
                     val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if(errorObj.getString("message") == "Not Found"){
+                        return@withContext OperationResult.Error(errorObj.getString("message"))
+                    }
                     if(errorObj.getString("error") == "Token expired!"){
                         refreshToken()
                         getProductDetails(barcode)
@@ -37,6 +42,9 @@ class ProductsRepositoryImpl @Inject constructor(
                 } else {
                     return@withContext OperationResult.Error("Что-то пошло не так!")
                 }
+            }
+            catch (e: IOException){
+                return@withContext OperationResult.Error(e.cause?.message.toString())
             }
             catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)
@@ -171,7 +179,15 @@ class ProductsRepositoryImpl @Inject constructor(
                 } else {
                     return@withContext OperationResult.Error("Что-то пошло не так!")
                 }
-            }catch (e: Exception){
+
+            }
+            catch (e: HttpException){
+                return@withContext OperationResult.Error(e.cause?.message.toString())
+            }
+            catch (e: IOException){
+                return@withContext OperationResult.Error(e.cause?.message.toString())
+            }
+            catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)
             }
         }
@@ -199,7 +215,11 @@ class ProductsRepositoryImpl @Inject constructor(
                 } else {
                     return@withContext OperationResult.Error("Что-то пошло не так!")
                 }
-            }catch (e: Exception){
+            }
+            catch (e: IOException){
+                return@withContext OperationResult.Error(e.cause?.message.toString())
+            }
+            catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)
             }
         }

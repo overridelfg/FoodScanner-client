@@ -12,6 +12,7 @@ import kirillrychkov.foodscanner_client.app.domain.entity.Ingredient
 import kirillrychkov.foodscanner_client.app.domain.repository.ChooseRestrictionsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okio.IOException
 import javax.inject.Inject
 
 class ChooseRestrictionsRepositoryImpl @Inject constructor(
@@ -27,7 +28,11 @@ class ChooseRestrictionsRepositoryImpl @Inject constructor(
                     it.toDiet()
                 }
                 return@withContext OperationResult.Success(result)
-            }catch (e: Exception){
+            }
+            catch (e: IOException){
+                return@withContext OperationResult.Error(e.cause?.message.toString())
+            }
+            catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)
             }
         }
@@ -40,7 +45,11 @@ class ChooseRestrictionsRepositoryImpl @Inject constructor(
                     it.toAllergen()
                 }
                 return@withContext OperationResult.Success(result)
-            }catch (e: Exception){
+            }
+            catch (e: IOException){
+                return@withContext OperationResult.Error(e.cause?.message.toString())
+            }
+            catch (e: Exception){
                 Log.d("AA", e.message.toString())
                 return@withContext OperationResult.Error(e.message)
             }

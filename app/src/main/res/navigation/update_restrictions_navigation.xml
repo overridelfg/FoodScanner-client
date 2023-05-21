@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/update_restrictions_navigation"
+    app:startDestination="@id/updateDietsFragment">
+
+    <fragment
+        android:id="@+id/updateDietsFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.update.UpdateDietsFragment"
+        android:label="fragment_update_diets"
+        tools:layout="@layout/fragment_update_diets" >
+        <action
+            android:id="@+id/action_updateDietsFragment_to_updateAllergensFragment"
+            app:destination="@id/updateAllergensFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateAllergensFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.update.UpdateAllergensFragment"
+        android:label="fragment_update_allergens"
+        tools:layout="@layout/fragment_update_allergens" />
+</navigation>

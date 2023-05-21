@@ -83,7 +83,7 @@ class BarcodeScannerFragment : Fragment() {
 
         subscribeGetProductDetails()
         subscribeGetProductRestrictionsDetails()
-        val barcode : Long = 4607960490108
+        val barcode : Long = 46079604901081
         viewModel.getProductDetails(barcode)
         if(allPermissionGranted()){
             startCamera()
@@ -111,7 +111,14 @@ class BarcodeScannerFragment : Fragment() {
                     viewModel.getProductRestrictionsDetails(it.result.id)
                 }
                 is ViewState.Error -> {
-                    Log.d(TAG, it.toString())
+                    if(it.result == "Not Found"){
+                        val bottomSheetRoot = binding.bottomSheetProductDetailsError.bottomSheetRoot
+                        bottomSheetRoot.visibility = View.VISIBLE
+                        val mBottomBehavior =
+                            BottomSheetBehavior.from(bottomSheetRoot)
+                        mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                        findNavController().navigate(R.id.action_barcodeScannerFragment_to_firstProductPhotoFragment)
+                    }
                 }
                 is ViewState.Loading -> {
                     Log.d(TAG, "Loading")

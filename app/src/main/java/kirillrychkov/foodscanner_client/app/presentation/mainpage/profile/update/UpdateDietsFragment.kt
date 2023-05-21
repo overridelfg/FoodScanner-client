@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -23,9 +24,6 @@ import kirillrychkov.foodscanner_client.app.presentation.restrictions.Restrictio
 import kirillrychkov.foodscanner_client.databinding.FragmentChooseDietsBinding
 import kirillrychkov.foodscanner_client.databinding.FragmentUpdateDietsBinding
 import javax.inject.Inject
-
-private const val ARG_SELECTED_DIETS = "SELECTED_DIETS"
-private const val ARG_SELECTED_ALLERGENS = "SELECTED_ALLERGENS"
 
 class UpdateDietsFragment : Fragment() {
     private var selectedDiets: ArrayList<Diet> = arrayListOf()
@@ -54,8 +52,11 @@ class UpdateDietsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        selectedDiets = requireArguments().getParcelableArrayList(ARG_SELECTED_DIETS)!!
-        selectedAllergens = requireArguments().getParcelableArrayList(ARG_SELECTED_ALLERGENS)!!
+        selectedDiets = requireArguments().getParcelableArrayList("UPDATE_DIETS")
+            ?: throw RuntimeException("Selected diets could not be a null")
+
+        selectedAllergens = requireArguments().getParcelableArrayList("UPDATE_ALLERGENS")
+            ?: throw RuntimeException("Selected allergens could not be a null")
     }
 
     override fun onCreateView(
@@ -159,7 +160,20 @@ class UpdateDietsFragment : Fragment() {
         rvShopList.adapter = adapter
     }
 
+//    private fun onBackPressed() {
+//        requireActivity()
+//            .onBackPressedDispatcher
+//            .addCallback(this, object : OnBackPressedCallback(true) {
+//                override fun handleOnBackPressed() {
+//                    requireActivity().finish()
+//                }
+//            }
+//        )
+//    }
+
     companion object {
+        const val ARG_SELECTED_DIETS = "SELECTED_DIETS"
+        const val ARG_SELECTED_ALLERGENS = "SELECTED_ALLERGENS"
         @JvmStatic
         fun newInstance(selectedDiets: ArrayList<Diet>, selectedAllergens: ArrayList<Allergen>) =
             UpdateDietsFragment().apply {

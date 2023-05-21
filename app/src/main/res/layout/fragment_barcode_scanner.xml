@@ -62,16 +62,21 @@
             android:layout_marginHorizontal="60dp"
             android:background="@drawable/background_camera_boarders" />
 
-
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
             <include
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:id="@+id/bottom_sheet"
                 layout="@layout/bottom_sheet_product_details" />
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <include
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/bottom_sheet_product_details_error"
+            layout="@layout/bottom_sheet_product_details_error" />
 
     </FrameLayout>
 

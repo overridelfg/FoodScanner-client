@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -20,6 +21,7 @@ import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListAdapter
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListRecyclerAdapter
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListViewModel
 import kirillrychkov.foodscanner_client.databinding.FragmentFavoritesBinding
 import kirillrychkov.foodscanner_client.databinding.FragmentProductsListBinding
@@ -34,7 +36,7 @@ class FavoritesFragment : Fragment() {
 
     private lateinit var viewModel: ProductsListViewModel
 
-    private lateinit var adapter: ProductsListAdapter
+    private lateinit var adapter: ProductsListRecyclerAdapter
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -64,6 +66,7 @@ class FavoritesFragment : Fragment() {
         viewModel.getFavorites()
         subscribeGetFavoriteList()
         subscribeAddFavoriteResult()
+        handleErrors()
         setupSwipeToRefreshLayout()
     }
 
@@ -75,33 +78,41 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun subscribeGetFavoriteList() {
+
         viewModel.favoriteList.observe(viewLifecycleOwner) {
             when (it) {
                 is ViewState.Success -> {
                     binding.pbFavoriteList.isVisible = false
                     adapter.productsList = it.result
+                    binding.errorButton.isVisible = false
+                    binding.errorImage.isVisible = false
+                    binding.errorTxt.isVisible = false
                 }
                 is ViewState.Loading -> {
                     binding.pbFavoriteList.isVisible = true
                 }
                 is ViewState.Error -> {
                     binding.pbFavoriteList.isVisible = false
-                    Snackbar.make(
-                        requireView(),
-                        it.result.toString(),
-                        Snackbar.LENGTH_LONG
-                    ).setAction("OK") {
-                    }.show()
+                    if(it.result == "Network is unreachable"){
+                        binding.errorButton.isVisible = true
+                        binding.errorImage.isVisible = true
+                        binding.errorTxt.isVisible = true
+                    }
                 }
             }
+        }
+    }
 
+    private fun handleErrors(){
+        binding.errorButton.setOnClickListener {
+            viewModel.getFavorites()
         }
     }
 
     private fun setupRecyclerView(){
         val rvProductsList = binding.rvProductsList
         rvProductsList.layoutManager = GridLayoutManager(requireContext(), 2)
-        adapter = ProductsListAdapter()
+        adapter = ProductsListRecyclerAdapter()
         adapter.onProductSelectListener = {
             viewModel.sendProductDetails(it)
             val bottomSheetRoot = binding.bottomSheet.bottomSheetRoot

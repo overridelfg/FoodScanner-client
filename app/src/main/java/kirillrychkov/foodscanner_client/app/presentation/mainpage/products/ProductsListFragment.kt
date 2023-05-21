@@ -12,7 +12,12 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.liveData
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.map
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
@@ -26,6 +31,9 @@ import kirillrychkov.foodscanner_client.app.presentation.ViewState
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.favorites.FavoritesFragment
 import kirillrychkov.foodscanner_client.databinding.FragmentProductsListBinding
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets.UTF_8
 import javax.inject.Inject
@@ -40,11 +48,12 @@ class ProductsListFragment : Fragment() {
     private lateinit var viewModel: ProductsListViewModel
 
     private lateinit var adapter: ProductsListAdapter
+    private var listOfProducts = mutableListOf<Product>()
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private val component by lazy{
+    private val component by lazy {
         FoodScannerApp.appComponent
     }
 
@@ -57,7 +66,10 @@ class ProductsListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity(), viewModelFactory)[ProductsListViewModel::class.java]
+        viewModel = ViewModelProvider(
+            requireActivity(),
+            viewModelFactory
+        )[ProductsListViewModel::class.java]
         _binding = FragmentProductsListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -70,12 +82,70 @@ class ProductsListFragment : Fragment() {
         setOnTextChange()
         subscribeAddFavoriteResult()
         setupSwipeToRefreshLayout()
-        viewModel.getProducts()
         subscribeGetProductsList()
     }
 
     private fun subscribeGetProductsList() {
-        viewModel.productsList.observe(viewLifecycleOwner){
+        lifecycleScope.launchWhenStarted {
+            viewModel.productsDataList.collect {
+                adapter.submitData(viewLifecycleOwner.lifecycle, it)
+            }
+        }
+
+        lifecycleScope.launchWhenStarted {
+            adapter.loadStateFlow.collect {
+                val state = it.refresh
+                binding.pbProductList.isVisible = state is LoadState.Loading
+                val errorState = when {
+                    it.append is LoadState.Error -> it.append as LoadState.Error
+                    it.prepend is LoadState.Error -> it.prepend as LoadState.Error
+                    it.refresh is LoadState.Error -> it.refresh as LoadState.Error
+                    else -> null
+                }
+                if (errorState != null) {
+                    if (errorState.error.cause?.message.toString() == "Network is unreachable") {
+                        if (adapter.snapshot().isEmpty()) {
+                            binding.errorImage.isVisible = true
+                            binding.errorButton.isVisible = true
+                            binding.errorTxt.isVisible = true
+                            binding.errorButton.setOnClickListener {
+                                adapter.refresh()
+                            }
+                        }
+                    }
+                }
+                else{
+                    binding.errorImage.isVisible = false
+                    binding.errorButton.isVisible = false
+                    binding.errorTxt.isVisible = false
+                }
+            }
+        }
+
+
+//        viewModel.productsList.observe(viewLifecycleOwner){
+//            when (it) {
+//                is ViewState.Success -> {
+//                    binding.pbProductList.isVisible = false
+//                }
+//                is ViewState.Loading -> {
+//                    binding.pbProductList.isVisible = true
+//                }
+//                is ViewState.Error -> {
+//                    binding.pbProductList.isVisible = false
+//                    Snackbar.make(
+//                        requireView(),
+//                        it.result.toString(),
+//                        Snackbar.LENGTH_LONG
+//                    ).setAction("OK") {
+//                    }.show()
+//                }
+//            }
+//        }
+    }
+
+    private fun subscribeGetProductsBySearch() {
+        viewModel.productsSearchList.observe(viewLifecycleOwner) {
             when (it) {
                 is ViewState.Success -> {
                     binding.pbProductList.isVisible = false
@@ -97,32 +167,12 @@ class ProductsListFragment : Fragment() {
         }
     }
 
-    private fun subscribeGetProductsBySearch(){
-        viewModel.productsSearchList.observe(viewLifecycleOwner){
-            when (it) {
-                is ViewState.Success -> {
-                    binding.pbProductList.isVisible = false
-                    adapter.productsList = it.result
-                }
-                is ViewState.Loading -> {
-                    binding.pbProductList.isVisible = true
-                }
-                is ViewState.Error -> {
-                    binding.pbProductList.isVisible = false
-                    Snackbar.make(
-                        requireView(),
-                        it.result.toString(),
-                        Snackbar.LENGTH_LONG
-                    ).setAction("OK") {
-                    }.show()
-                }
-            }
-        }
-    }
 
-    private fun setupRecyclerView(){
+    private fun setupRecyclerView() {
+
         val rvProductsList = binding.rvProductsList
-        rvProductsList.layoutManager = GridLayoutManager(requireContext(), 2)
+        val layoutManager = GridLayoutManager(requireContext(), 2)
+        rvProductsList.layoutManager = layoutManager
         adapter = ProductsListAdapter()
         adapter.onProductSelectListener = {
             viewModel.sendProductDetails(it)
@@ -135,12 +185,29 @@ class ProductsListFragment : Fragment() {
         adapter.onProductFavoriteClickListener = {
             viewModel.addToFavorite(it)
         }
-        rvProductsList.adapter = adapter
+        val footerAdapter = ProductListLoaderStateAdapter() {
+            adapter.retry()
+        }
+        rvProductsList.adapter = adapter.withLoadStateFooter(footerAdapter)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (position == adapter.itemCount && footerAdapter.itemCount > 0) {
+                    2
+                } else {
+                    1
+                }
+            }
+        }
+
+        adapter.addLoadStateListener {
+            binding.pbProductList.isVisible = it.source.refresh is LoadState.Loading
+
+        }
     }
 
-    private fun bindSearchButton(){
+    private fun bindSearchButton() {
         binding.etSearchProduct.setOnEditorActionListener { view, actionId, keyEvent ->
-            if(actionId == EditorInfo.IME_ACTION_SEARCH){
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val data = binding.etSearchProduct.text.toString()
                 viewModel.getProductsBySearch(data)
                 return@setOnEditorActionListener true
@@ -149,18 +216,22 @@ class ProductsListFragment : Fragment() {
         }
     }
 
-    private fun setupSwipeToRefreshLayout(){
+    private fun setupSwipeToRefreshLayout() {
         binding.swipeLayout.setOnRefreshListener {
             binding.swipeLayout.isRefreshing = false
             binding.etSearchProduct.setText("")
-            viewModel.getProducts()
+            adapter.refresh()
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        adapter.refresh()
+    }
 
 
-    private fun subscribeAddFavoriteResult(){
-        viewModel.addToFavoriteResult.observe(viewLifecycleOwner){
+    private fun subscribeAddFavoriteResult() {
+        viewModel.addToFavoriteResult.observe(viewLifecycleOwner) {
             when (it) {
                 is ViewState.Success -> {
                     binding.pbProductList.isVisible = false
@@ -179,10 +250,6 @@ class ProductsListFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
 

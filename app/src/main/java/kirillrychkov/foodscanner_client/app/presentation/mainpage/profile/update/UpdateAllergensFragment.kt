@@ -81,6 +81,12 @@ class UpdateAllergensFragment : Fragment() {
         setupSwipeToRefreshLayout()
         subscribeGetSelectedAllergens()
         binding.nextButton.setOnClickListener {
+            selectedDiets.sortBy {
+                it.id
+            }
+            currentSelectedAllergens.sortBy {
+                it.id
+            }
             viewModel.updateRestrictions(selectedDiets, currentSelectedAllergens)
 
         }
