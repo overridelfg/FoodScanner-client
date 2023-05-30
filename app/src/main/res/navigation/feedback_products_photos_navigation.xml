@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/feedback_products_photos_navigation"
+    app:startDestination="@id/firstProductPhotoFragment">
+
+    <fragment
+        android:id="@+id/firstProductPhotoFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.FirstProductPhotoFragment"
+        android:label="fragment_first_product_photo"
+        tools:layout="@layout/fragment_first_product_photo" >
+
+        <action
+            android:id="@+id/action_firstProductPhotoFragment_to_firstProductPhotoImageFragment"
+            app:destination="@id/firstProductPhotoImageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/firstProductPhotoImageFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.FirstProductPhotoImageFragment"
+        android:label="fragment_first_product_photo_image"
+        tools:layout="@layout/fragment_first_product_photo_image" >
+
+        <action
+            android:id="@+id/action_pop_back"
+            app:destination="@id/firstProductPhotoFragment"
+            app:popUpTo="@+id/firstProductPhotoFragment"/>
+
+        <action
+            android:id="@+id/action_firstProductPhotoImageFragment_to_secondPhotoProductFragment"
+            app:destination="@id/secondPhotoProductFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/secondPhotoProductFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.SecondPhotoProductFragment"
+        android:label="fragment_second_photo_product"
+        tools:layout="@layout/fragment_second_photo_product" >
+        <action
+            android:id="@+id/action_secondPhotoProductFragment_to_secondPhotoProductImageFragment"
+            app:destination="@id/secondPhotoProductImageFragment" />
+        <action
+            android:id="@+id/action_secondPhotoProductFragment_to_firstProductPhotoImageFragment"
+            app:destination="@id/firstProductPhotoImageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/secondPhotoProductImageFragment"
+        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.SecondPhotoProductImageFragment"
+        android:label="fragment_second_photo_product_image"
+        tools:layout="@layout/fragment_second_photo_product_image" >
+        <action
+            android:id="@+id/action_secondPhotoProductImageFragment_to_secondPhotoProductFragment"
+            app:destination="@id/secondPhotoProductFragment" />
+    </fragment>
+</navigation>

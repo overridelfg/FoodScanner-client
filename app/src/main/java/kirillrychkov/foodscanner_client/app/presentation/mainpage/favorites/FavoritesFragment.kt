@@ -93,7 +93,7 @@ class FavoritesFragment : Fragment() {
                 }
                 is ViewState.Error -> {
                     binding.pbFavoriteList.isVisible = false
-                    if(it.result == "Network is unreachable"){
+                    if(it.result == "java.net.ConnectException"){
                         binding.errorButton.isVisible = true
                         binding.errorImage.isVisible = true
                         binding.errorTxt.isVisible = true

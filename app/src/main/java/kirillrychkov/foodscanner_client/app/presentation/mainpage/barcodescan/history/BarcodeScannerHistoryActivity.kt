@@ -1,39 +1,32 @@
 package kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.history
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
-import com.squareup.picasso.Picasso
 import kirillrychkov.foodscanner_client.R
-import kirillrychkov.foodscanner_client.app.domain.entity.Product
-import kirillrychkov.foodscanner_client.app.domain.entity.ProductRestriction
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeScannerViewModel
-import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListAdapter
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListRecyclerAdapter
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListViewModel
-import kirillrychkov.foodscanner_client.databinding.FragmentBarcodeScannerHistoryBinding
+import kirillrychkov.foodscanner_client.databinding.ActivityBarcodeScannerHistoryBinding
+import kirillrychkov.foodscanner_client.databinding.ActivityMainBinding
 import javax.inject.Inject
 
+class BarcodeScannerHistoryActivity : AppCompatActivity() {
 
-class BarcodeScannerHistoryFragment : Fragment() {
-
-    private var _binding: FragmentBarcodeScannerHistoryBinding? = null
-    private val binding: FragmentBarcodeScannerHistoryBinding
-        get() = _binding ?: throw RuntimeException("FragmentBarcodeScannerHistoryBinding == null")
-
+    private var _binding: ActivityBarcodeScannerHistoryBinding? = null
+    private val binding: ActivityBarcodeScannerHistoryBinding
+        get() = _binding ?: throw RuntimeException("ActivityBarcodeScannerHistoryBinding == null")
 
     private lateinit var viewModel: BarcodeScannerViewModel
     private lateinit var viewModelProductDetails: ProductsListViewModel
@@ -47,29 +40,18 @@ class BarcodeScannerHistoryFragment : Fragment() {
         FoodScannerApp.appComponent
     }
 
-    override fun onAttach(context: Context) {
+    override fun attachBaseContext(newBase: Context?) {
         component.inject(this)
-        super.onAttach(context)
+        super.attachBaseContext(newBase)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        viewModelProductDetails = ViewModelProvider(requireActivity(), viewModelFactory)[ProductsListViewModel::class.java]
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        _binding = ActivityBarcodeScannerHistoryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        viewModelProductDetails = ViewModelProvider(this, viewModelFactory)[ProductsListViewModel::class.java]
         viewModel = ViewModelProvider(this, viewModelFactory)[BarcodeScannerViewModel::class.java]
-        _binding = FragmentBarcodeScannerHistoryBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
-    override fun onStop() {
-        super.onStop()
-//        val fragment = parentFragmentManager.findFragmentById(R.id.barcodeScannerHistoryFragment)!!
-//        parentFragmentManager.beginTransaction().remove(fragment).commit();
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         subscribeGetProductRestrictionsDetails()
         viewModel.getBarcodeScanHistory()
@@ -88,8 +70,9 @@ class BarcodeScannerHistoryFragment : Fragment() {
         }
     }
 
+
     private fun subscribeGetHistoryList() {
-        viewModel.barcodeScanHistoryResult.observe(viewLifecycleOwner) {
+        viewModel.barcodeScanHistoryResult.observe(this) {
             when (it) {
                 is ViewState.Success -> {
                     binding.pbHistoryList.isVisible = false
@@ -103,7 +86,7 @@ class BarcodeScannerHistoryFragment : Fragment() {
                 }
                 is ViewState.Error -> {
                     binding.pbHistoryList.isVisible = false
-                    if(it.result == "Network is unreachable"){
+                    if(it.result == "java.net.ConnectException"){
                         binding.errorButton.isVisible = true
                         binding.errorImage.isVisible = true
                         binding.errorTxt.isVisible = true
@@ -116,7 +99,7 @@ class BarcodeScannerHistoryFragment : Fragment() {
 
     private fun setupRecyclerView(){
         val rvProductsList = binding.rvProductsList
-        rvProductsList.layoutManager = GridLayoutManager(requireContext(), 2)
+        rvProductsList.layoutManager = GridLayoutManager(this, 2)
         adapter = ProductsListRecyclerAdapter()
         adapter.onProductSelectListener = {
             viewModelProductDetails.sendProductDetails(it)
@@ -135,7 +118,7 @@ class BarcodeScannerHistoryFragment : Fragment() {
     }
 
     private fun subscribeGetProductRestrictionsDetails(){
-        viewModel.productRestrictionDetails.observe(viewLifecycleOwner){
+        viewModel.productRestrictionDetails.observe(this){
             when (it) {
                 is ViewState.Success -> {
                     binding.pbHistoryList.isVisible = false
@@ -146,7 +129,7 @@ class BarcodeScannerHistoryFragment : Fragment() {
                 is ViewState.Error -> {
                     binding.pbHistoryList.isVisible = false
                     Snackbar.make(
-                        requireView(),
+                        binding.mainLayout,
                         it.result.toString(),
                         Snackbar.LENGTH_LONG
                     ).setAction("OK") {
@@ -159,7 +142,7 @@ class BarcodeScannerHistoryFragment : Fragment() {
 
 
     private fun subscribeAddFavoriteResult(){
-        viewModel.addToFavoriteResult.observe(viewLifecycleOwner){
+        viewModel.addToFavoriteResult.observe(this){
             when (it) {
                 is ViewState.Success -> {
                 }
@@ -167,7 +150,7 @@ class BarcodeScannerHistoryFragment : Fragment() {
                 }
                 is ViewState.Error -> {
                     Snackbar.make(
-                        requireView(),
+                        binding.mainLayout,
                         it.result.toString(),
                         Snackbar.LENGTH_LONG
                     ).setAction("OK") {
@@ -176,6 +159,4 @@ class BarcodeScannerHistoryFragment : Fragment() {
             }
         }
     }
-
-
 }

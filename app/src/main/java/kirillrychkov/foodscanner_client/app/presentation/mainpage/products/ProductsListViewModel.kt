@@ -1,9 +1,6 @@
 package kirillrychkov.foodscanner_client.app.presentation.mainpage.products
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.*
 import kirillrychkov.foodscanner_client.app.data.PrefsStorage
 import kirillrychkov.foodscanner_client.app.data.network.ProductsListPageSource
@@ -14,11 +11,6 @@ import kirillrychkov.foodscanner_client.app.domain.entity.ProductRestriction
 import kirillrychkov.foodscanner_client.app.domain.entity.SuccessResponse
 import kirillrychkov.foodscanner_client.app.domain.usecase.products.*
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,14 +24,31 @@ class ProductsListViewModel @Inject constructor(
     val prefsStorage: PrefsStorage
 ) : ViewModel() {
 
-    val productsDataList: Flow<PagingData<Product>> = Pager<Int, Product>(
-        PagingConfig(
-            pageSize = 10,
-            enablePlaceholders = false,
-        )
-    ){
-        ProductsListPageSource(apiService, prefsStorage)
-    }.flow.cachedIn(viewModelScope)
+    private val _currentQuery = MutableLiveData<String>("")
+    val currentQuery : LiveData<String>
+        get() = _currentQuery
+
+    private val _currentSort = MutableLiveData<String>("normal")
+    val currentSort : LiveData<String>
+        get() = _currentSort
+
+    val productsDataList: LiveData<PagingData<Product>> = _currentQuery.switchMap {
+        query ->
+        Pager<Int, Product>(
+            PagingConfig(
+                pageSize = 10,
+                enablePlaceholders = false,
+            )
+        ){
+            ProductsListPageSource(apiService, prefsStorage, query, _currentSort.value!!)
+        }.liveData.cachedIn(viewModelScope)
+    }
+
+    fun submitData(query: String, sortName: String){
+        _currentSort.value = sortName
+        _currentQuery.value = query
+    }
+
 
     private val _productsList = MutableLiveData<ViewState<List<Product>, String?>>()
     val productsList : LiveData<ViewState<List<Product>, String?>>
@@ -71,6 +80,8 @@ class ProductsListViewModel @Inject constructor(
 
     fun getProducts(){
         viewModelScope.launch {
+            val x = 3
+
             _productsList.value = ViewState.loading()
             val result = getProductsUseCase.invoke()
             _productsList.value = when (result) {
@@ -110,7 +121,6 @@ class ProductsListViewModel @Inject constructor(
                 is OperationResult.Error -> ViewState.error(result.data)
                 is OperationResult.Success -> ViewState.success(result.data)
             }
-
         }
     }
 

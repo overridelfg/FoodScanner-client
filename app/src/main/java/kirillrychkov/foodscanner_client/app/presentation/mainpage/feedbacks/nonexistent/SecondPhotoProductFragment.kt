@@ -1,16 +1,8 @@
 package kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent
 
-import android.R.attr.scaleHeight
-import android.R.attr.scaleWidth
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.Image
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,30 +10,23 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.google.mlkit.vision.common.InputImage
 import kirillrychkov.foodscanner_client.R
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
-import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListViewModel
 import kirillrychkov.foodscanner_client.databinding.FragmentFirstProductPhotoBinding
-import java.io.ByteArrayOutputStream
+import kirillrychkov.foodscanner_client.databinding.FragmentSecondPhotoProductBinding
 import java.io.File
-import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
-
-class FirstProductPhotoFragment : Fragment() {
-
-    private var _binding: FragmentFirstProductPhotoBinding? = null
-    private val binding: FragmentFirstProductPhotoBinding
-        get() = _binding ?: throw RuntimeException("FragmentFirstProductPhotoBinding == null")
+class SecondPhotoProductFragment : Fragment() {
+    private var _binding: FragmentSecondPhotoProductBinding? = null
+    private val binding: FragmentSecondPhotoProductBinding
+        get() = _binding ?: throw RuntimeException("FragmentSecondPhotoFragmentBinding == null")
 
     private lateinit var viewModel: FeedbackViewModel
 
@@ -71,7 +56,7 @@ class FirstProductPhotoFragment : Fragment() {
             requireActivity(),
             viewModelFactory
         )[FeedbackViewModel::class.java]
-        _binding = FragmentFirstProductPhotoBinding.inflate(layoutInflater)
+        _binding = FragmentSecondPhotoProductBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -99,8 +84,8 @@ class FirstProductPhotoFragment : Fragment() {
                         90
                     ).bitmapInternal!!
 
-                    viewModel.setFirstImage(bitmap)
-                    findNavController().navigate(R.id.action_firstProductPhotoFragment_to_firstProductPhotoImageFragment)
+                    viewModel.setSecondImage(bitmap)
+                    findNavController().navigate(R.id.action_secondPhotoProductFragment_to_secondPhotoProductImageFragment)
                     image.close()
                     binding.pbTakePhotoFirst.isVisible = false
                 }
@@ -117,6 +102,7 @@ class FirstProductPhotoFragment : Fragment() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener(Runnable {
             val cameraProvider = cameraProviderFuture.get()
+            val rotation: Int = binding.pvCameraPhoto.display.rotation
             val preview = Preview.Builder().build()
                 .also {
                     it.setSurfaceProvider(binding.pvCameraPhoto.surfaceProvider)
@@ -136,7 +122,7 @@ class FirstProductPhotoFragment : Fragment() {
             }catch (e: Exception){
 
             }
-            }, ContextCompat.getMainExecutor(requireContext()))
+        }, ContextCompat.getMainExecutor(requireContext()))
     }
 
 

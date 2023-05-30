@@ -37,9 +37,10 @@
 
         <EditText
             android:id="@+id/et_search_product"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15sp"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/background_search_edittext"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="10dp"
@@ -57,11 +58,22 @@
             android:textCursorDrawable="@color/white"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@id/swipe_layout"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_sort"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
         </EditText>
+        
+        <ImageView
+            android:id="@+id/btn_sort"
+            android:background="@drawable/ic_baseline_sort_24"
+            android:layout_marginEnd="15dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:layout_constraintBottom_toTopOf="@id/swipe_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/et_search_product"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_layout"

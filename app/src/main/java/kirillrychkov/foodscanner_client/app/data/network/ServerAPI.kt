@@ -2,14 +2,11 @@ package kirillrychkov.foodscanner_client.app.data.network
 
 import kirillrychkov.foodscanner_client.app.data.network.models.*
 import kirillrychkov.foodscanner_client.app.domain.entity.Diet
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
 import retrofit2.http.Query as QueryRetro
 
 
@@ -68,7 +65,8 @@ interface ServerAPI {
     @GET("products/search")
     suspend fun getProductBySearch(
         @Header("Authorization") token: String,
-        @QueryRetro("name") name: String
+        @QueryRetro("name") name: String,
+        @QueryRetro("page") page: Int
     ): Response<List<ProductDTO>>
 
     @GET("products/isProductValid/{product_id}")
@@ -88,10 +86,20 @@ interface ServerAPI {
         @Header("Authorization") token: String
     ): Response<List<ProductDTO>>
 
+    @GET("products/list/valid")
+    suspend fun getValidProducts(
+        @Header("Authorization") token: String
+    ): Response<List<ProductDTO>>
+
     @GET("products/barcodeScanHistory")
     suspend fun getBarcodeScanHistory(
         @Header("Authorization") token: String
     ): Response<List<ProductDTO>>
+
+
+    suspend fun postNonexistentProductFeedback(
+        @Header("Authorization") token: String
+    ): Response<SuccessResponseDTO>
 
 
 }

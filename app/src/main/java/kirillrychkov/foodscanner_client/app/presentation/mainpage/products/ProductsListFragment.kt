@@ -34,6 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import java.net.ConnectException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets.UTF_8
 import javax.inject.Inject
@@ -49,6 +50,8 @@ class ProductsListFragment : Fragment() {
 
     private lateinit var adapter: ProductsListAdapter
     private var listOfProducts = mutableListOf<Product>()
+    private var query: String = ""
+    private var currentSort = "normal"
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -83,14 +86,21 @@ class ProductsListFragment : Fragment() {
         subscribeAddFavoriteResult()
         setupSwipeToRefreshLayout()
         subscribeGetProductsList()
+        subscribeSortResult()
+        viewModel.submitData("","normal")
+        binding.btnSort.setOnClickListener {
+            binding.etSearchProduct.setText("")
+            viewModel.submitData("", currentSort)
+        }
     }
 
     private fun subscribeGetProductsList() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.productsDataList.collect {
+        lifecycleScope.launch {
+            viewModel.productsDataList.observe(viewLifecycleOwner) {
                 adapter.submitData(viewLifecycleOwner.lifecycle, it)
             }
         }
+
 
         lifecycleScope.launchWhenStarted {
             adapter.loadStateFlow.collect {
@@ -103,18 +113,20 @@ class ProductsListFragment : Fragment() {
                     else -> null
                 }
                 if (errorState != null) {
-                    if (errorState.error.cause?.message.toString() == "Network is unreachable") {
+                    if (
+                        errorState.error.cause.toString().split(':')[0] == "java.net.ConnectException") {
                         if (adapter.snapshot().isEmpty()) {
                             binding.errorImage.isVisible = true
                             binding.errorButton.isVisible = true
                             binding.errorTxt.isVisible = true
+
+                            binding.pbProductList.isVisible = false
                             binding.errorButton.setOnClickListener {
                                 adapter.refresh()
                             }
                         }
                     }
-                }
-                else{
+                } else {
                     binding.errorImage.isVisible = false
                     binding.errorButton.isVisible = false
                     binding.errorTxt.isVisible = false
@@ -122,26 +134,6 @@ class ProductsListFragment : Fragment() {
             }
         }
 
-
-//        viewModel.productsList.observe(viewLifecycleOwner){
-//            when (it) {
-//                is ViewState.Success -> {
-//                    binding.pbProductList.isVisible = false
-//                }
-//                is ViewState.Loading -> {
-//                    binding.pbProductList.isVisible = true
-//                }
-//                is ViewState.Error -> {
-//                    binding.pbProductList.isVisible = false
-//                    Snackbar.make(
-//                        requireView(),
-//                        it.result.toString(),
-//                        Snackbar.LENGTH_LONG
-//                    ).setAction("OK") {
-//                    }.show()
-//                }
-//            }
-//        }
     }
 
     private fun subscribeGetProductsBySearch() {
@@ -206,10 +198,11 @@ class ProductsListFragment : Fragment() {
     }
 
     private fun bindSearchButton() {
+
         binding.etSearchProduct.setOnEditorActionListener { view, actionId, keyEvent ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val data = binding.etSearchProduct.text.toString()
-                viewModel.getProductsBySearch(data)
+                viewModel.submitData(data, "normal")
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
@@ -220,12 +213,15 @@ class ProductsListFragment : Fragment() {
         binding.swipeLayout.setOnRefreshListener {
             binding.swipeLayout.isRefreshing = false
             binding.etSearchProduct.setText("")
+            viewModel.submitData("", "normal")
             adapter.refresh()
         }
     }
 
     override fun onResume() {
         super.onResume()
+        viewModel.submitData("", "normal")
+        binding.etSearchProduct.setText("")
         adapter.refresh()
     }
 
@@ -248,6 +244,18 @@ class ProductsListFragment : Fragment() {
                     ).setAction("OK") {
                     }.show()
                 }
+            }
+        }
+    }
+
+    private fun subscribeSortResult() {
+        viewModel.currentSort.observe(viewLifecycleOwner) {
+            if(it == "normal"){
+                binding.btnSort.setBackgroundResource(R.drawable.ic_baseline_sort_24)
+                currentSort = "valid"
+            }else{
+                binding.btnSort.setBackgroundResource(R.drawable.ic_baseline_sort_selected)
+                currentSort = "normal"
             }
         }
     }

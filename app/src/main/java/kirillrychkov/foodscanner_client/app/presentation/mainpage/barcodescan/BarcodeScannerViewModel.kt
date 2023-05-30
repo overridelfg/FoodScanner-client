@@ -26,6 +26,10 @@ class BarcodeScannerViewModel @Inject constructor(
     val productDetails : LiveData<ViewState<Product, String?>>
         get() = _productDetails
 
+    private val _currentBarcode = MutableLiveData<Long>()
+    val currentBarcode : LiveData<Long>
+        get() = _currentBarcode
+
     private val _productRestrictionDetails = MutableLiveData<ViewState<ProductRestriction, String?>>()
     val productRestrictionDetails : LiveData<ViewState<ProductRestriction, String?>>
         get() = _productRestrictionDetails
@@ -82,5 +86,9 @@ class BarcodeScannerViewModel @Inject constructor(
             }
 
         }
+    }
+
+    fun setCurrentBarcode(barcode: Long){
+        _currentBarcode.value = barcode
     }
 }

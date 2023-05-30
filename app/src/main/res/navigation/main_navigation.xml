@@ -14,12 +14,7 @@
         <action
             android:id="@+id/action_barcodeScannerFragment_to_barcodeScannerHistoryFragment"
             app:destination="@id/barcodeScannerHistoryFragment" />
-        <action
-            android:id="@+id/action_barcodeScannerFragment_to_productRestrictionsDetailsFragment"
-            app:destination="@id/productRestrictionsDetailsFragment" />
-        <action
-            android:id="@+id/action_barcodeScannerFragment_to_firstProductPhotoFragment"
-            app:destination="@id/firstProductPhotoFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -76,10 +71,5 @@
         android:id="@+id/restrictionInfoFragment2"
         android:name="kirillrychkov.foodscanner_client.app.presentation.restrictions.RestrictionInfoFragment"
         android:label="RestrictionInfoFragment" />
-    <fragment
-        android:id="@+id/firstProductPhotoFragment"
-        android:name="kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.FirstProductPhotoFragment"
-        android:label="fragment_first_product_photo"
-        tools:layout="@layout/fragment_first_product_photo" />
 
 </navigation>

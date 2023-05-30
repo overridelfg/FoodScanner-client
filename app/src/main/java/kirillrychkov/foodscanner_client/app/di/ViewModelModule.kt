@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import kirillrychkov.foodscanner_client.app.presentation.auth.AuthViewModel
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeScannerViewModel
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.FeedbackViewModel
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListViewModel
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.ProfileViewModel
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.update.UpdateRestrictionsViewModel
@@ -43,4 +44,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(UpdateRestrictionsViewModel::class)
     fun bindUpdateRestrictionsViewModel(updateRestrictionsViewModel: UpdateRestrictionsViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FeedbackViewModel::class)
+    fun bindFeedbackViewModel(feedbackViewModel: FeedbackViewModel) : ViewModel
 }

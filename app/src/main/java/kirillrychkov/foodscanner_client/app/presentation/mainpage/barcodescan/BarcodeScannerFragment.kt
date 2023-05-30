@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Instrumentation
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -34,6 +35,8 @@ import kirillrychkov.foodscanner_client.app.domain.repository.ProductsRepository
 import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.history.BarcodeScannerHistoryActivity
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.ProductPhotosFeedbackActivity
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListViewModel
 import kirillrychkov.foodscanner_client.databinding.FragmentBarcodeScannerBinding
 import java.util.concurrent.ExecutorService
@@ -51,12 +54,15 @@ class BarcodeScannerFragment : Fragment() {
     private lateinit var viewModel: BarcodeScannerViewModel
     private lateinit var viewModelProductDetails: ProductsListViewModel
 
+    private var currentBarcode : Long? = null
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
 
     @Inject
     lateinit var productsRepository: ProductsRepository
+
 
     private val component by lazy{
         FoodScannerApp.appComponent
@@ -83,6 +89,7 @@ class BarcodeScannerFragment : Fragment() {
 
         subscribeGetProductDetails()
         subscribeGetProductRestrictionsDetails()
+        getCurrentBarcode()
         val barcode : Long = 46079604901081
         viewModel.getProductDetails(barcode)
         if(allPermissionGranted()){
@@ -91,13 +98,20 @@ class BarcodeScannerFragment : Fragment() {
             permReqLauncher.launch(PERMISSION)
         }
         binding.buttonHistory.setOnClickListener {
-            findNavController().navigate(R.id.action_barcodeScannerFragment_to_barcodeScannerHistoryFragment)
+            startActivity(Intent(requireActivity(), BarcodeScannerHistoryActivity::class.java))
+//            findNavController().navigate(R.id.action_barcodeScannerFragment_to_barcodeScannerHistoryFragment)
         }
 
     }
 
     override fun onPause() {
+
         super.onPause()
+    }
+
+    override fun onResume() {
+        startCamera()
+        super.onResume()
     }
 
 
@@ -117,7 +131,9 @@ class BarcodeScannerFragment : Fragment() {
                         val mBottomBehavior =
                             BottomSheetBehavior.from(bottomSheetRoot)
                         mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                        findNavController().navigate(R.id.action_barcodeScannerFragment_to_firstProductPhotoFragment)
+                        binding.bottomSheetProductDetailsError.buttonSendNonExistentProduct.setOnClickListener {
+                            startActivity(Intent(requireContext(), ProductPhotosFeedbackActivity::class.java))
+                        }
                     }
                 }
                 is ViewState.Loading -> {
@@ -186,8 +202,6 @@ class BarcodeScannerFragment : Fragment() {
                                 scanBarcode(image)
                         }
 
-                        private var firstCall = true
-
                         private fun scanBarcode(image: ImageProxy) {
                             @SuppressLint("UnsafeOptInUsageError")
                             val image1 = image.image
@@ -205,11 +219,9 @@ class BarcodeScannerFragment : Fragment() {
                                     .addOnSuccessListener { barcodes ->
                                         val barcode = barcodes.getOrNull(0)
                                         if (barcode != null) {
-                                            if (firstCall) {
-                                                firstCall = false
+                                            if(currentBarcode != barcode.rawValue!!.toLong()){
                                                 readBarcodeData(barcode)
                                             }
-
                                         }
                                     }
                                     .addOnFailureListener {
@@ -223,7 +235,9 @@ class BarcodeScannerFragment : Fragment() {
 
                         private fun readBarcodeData(barcode: Barcode) {
                             if(barcode.rawValue != null){
+                                viewModel.setCurrentBarcode(barcode.rawValue!!.toLong())
                                 viewModel.getProductDetails(barcode.rawValue!!.toLong())
+
                             }
                         }
                     })
@@ -242,6 +256,12 @@ class BarcodeScannerFragment : Fragment() {
                 Log.d(TAG, e.message.toString())
             }
         }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun getCurrentBarcode(){
+        viewModel.currentBarcode.observe(viewLifecycleOwner){
+            currentBarcode = it
+        }
     }
 
     private fun allPermissionGranted() = PERMISSION.all{

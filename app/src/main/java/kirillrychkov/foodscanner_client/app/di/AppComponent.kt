@@ -8,8 +8,12 @@ import kirillrychkov.foodscanner_client.app.presentation.SplashActivity
 import kirillrychkov.foodscanner_client.app.presentation.auth.LoginFragment
 import kirillrychkov.foodscanner_client.app.presentation.auth.RegisterFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.BarcodeScannerFragment
-import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.history.BarcodeScannerHistoryFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.barcodescan.history.BarcodeScannerHistoryActivity
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.favorites.FavoritesFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.FirstProductPhotoFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.FirstProductPhotoImageFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.SecondPhotoProductFragment
+import kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent.SecondPhotoProductImageFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.ProductsListFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.products.details.ProductDetailsFragment
 import kirillrychkov.foodscanner_client.app.presentation.mainpage.profile.restrictionslist.AllergensListFragment
@@ -51,7 +55,7 @@ interface AppComponent{
 
     fun inject(favoritesFragment: FavoritesFragment)
 
-    fun inject(barcodeScannerHistoryFragment: BarcodeScannerHistoryFragment)
+    fun inject(barcodeScannerHistoryActivity: BarcodeScannerHistoryActivity)
 
     fun inject(productDetailsFragment: ProductDetailsFragment)
 
@@ -59,6 +63,13 @@ interface AppComponent{
 
     fun inject(updateAllergensFragment: UpdateAllergensFragment)
 
+    fun inject(secondPhotoProductImageFragment: SecondPhotoProductImageFragment)
+
+    fun inject(firstProductPhotoFragment : FirstProductPhotoFragment)
+
+    fun inject(firstProductPhotoImageFragment: FirstProductPhotoImageFragment)
+
+    fun inject(secondPhotoProductFragment: SecondPhotoProductFragment)
     @Component.Builder
     interface Builder {
         fun build(): AppComponent

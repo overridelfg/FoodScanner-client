@@ -1,20 +1,30 @@
 package kirillrychkov.foodscanner_client.app.data.repository
 
-import android.util.Log
+import android.graphics.Bitmap
 import kirillrychkov.foodscanner_client.app.data.PrefsStorage
 import kirillrychkov.foodscanner_client.app.data.network.ServerAPI
 import kirillrychkov.foodscanner_client.app.data.network.models.*
 import kirillrychkov.foodscanner_client.app.domain.OperationResult
+import kirillrychkov.foodscanner_client.app.domain.entity.FeedbackImages
 import kirillrychkov.foodscanner_client.app.domain.entity.Product
 import kirillrychkov.foodscanner_client.app.domain.entity.ProductRestriction
 import kirillrychkov.foodscanner_client.app.domain.entity.SuccessResponse
 import kirillrychkov.foodscanner_client.app.domain.repository.ProductsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
 import org.json.JSONObject
 import retrofit2.HttpException
+import java.io.File
+import java.net.ConnectException
 import javax.inject.Inject
+
 
 class ProductsRepositoryImpl @Inject constructor(
     private val apiService: ServerAPI,
@@ -44,7 +54,7 @@ class ProductsRepositoryImpl @Inject constructor(
                 }
             }
             catch (e: IOException){
-                return@withContext OperationResult.Error(e.cause?.message.toString())
+                return@withContext OperationResult.Error(e.cause.toString().split(':')[0])
             }
             catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)
@@ -84,7 +94,7 @@ class ProductsRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO){
             try{
                 val token = "Bearer " + prefsStorage.getUser()!!.accessToken
-                val response = apiService.getProductBySearch(token, name)
+                val response = apiService.getProductBySearch(token, name, 0)
                 if (response.isSuccessful && response.body() != null){
                     val result = response.body()!!.map{
                         it.toProduct()
@@ -182,10 +192,10 @@ class ProductsRepositoryImpl @Inject constructor(
 
             }
             catch (e: HttpException){
-                return@withContext OperationResult.Error(e.cause?.message.toString())
+                return@withContext OperationResult.Error(e.cause.toString().split(':')[0])
             }
             catch (e: IOException){
-                return@withContext OperationResult.Error(e.cause?.message.toString())
+                return@withContext OperationResult.Error(e.cause.toString().split(':')[0])
             }
             catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)
@@ -217,9 +227,35 @@ class ProductsRepositoryImpl @Inject constructor(
                 }
             }
             catch (e: IOException){
-                return@withContext OperationResult.Error(e.cause?.message.toString())
+                return@withContext OperationResult.Error(e.cause.toString().split(':')[0])
             }
             catch (e: Exception){
+                return@withContext OperationResult.Error(e.message)
+            }
+        }
+    }
+
+    override suspend fun feedbackNonexistentProducts(feedBack: FeedbackImages): OperationResult<SuccessResponse, String?> {
+        return withContext(Dispatchers.IO){
+            try{
+                val token = "Bearer " + prefsStorage.getUser()!!.accessToken
+
+                val response = apiService.postNonexistentProductFeedback(token)
+                if (response.isSuccessful && response.body() != null){
+                    val result = response.body()!!.toSuccessResponse()
+                    return@withContext OperationResult.Success(result)
+                }else if (response.errorBody() != null) {
+                    val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if(errorObj.getString("error") == "Token expired!"){
+                        refreshToken()
+                        feedbackNonexistentProducts(feedBack)
+                    }else{
+                        return@withContext OperationResult.Error(errorObj.getString("error"))
+                    }
+                } else {
+                    return@withContext OperationResult.Error("Что-то пошло не так!")
+                }
+            }catch (e: Exception){
                 return@withContext OperationResult.Error(e.message)
             }
         }

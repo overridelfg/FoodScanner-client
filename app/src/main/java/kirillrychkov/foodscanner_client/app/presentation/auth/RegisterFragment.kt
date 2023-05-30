@@ -17,6 +17,8 @@ import kirillrychkov.foodscanner_client.app.presentation.FoodScannerApp
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import kirillrychkov.foodscanner_client.R
+import kirillrychkov.foodscanner_client.app.domain.entity.Allergen
+import kirillrychkov.foodscanner_client.app.domain.entity.Diet
 import kirillrychkov.foodscanner_client.app.presentation.MainActivity
 import kirillrychkov.foodscanner_client.app.presentation.ViewModelFactory
 import kirillrychkov.foodscanner_client.app.presentation.ViewState
@@ -29,6 +31,8 @@ class RegisterFragment : Fragment() {
     private val binding: FragmentRegisterBinding
         get() = _binding ?: throw RuntimeException("FragmentRegisterBinding == null")
     private lateinit var viewModel: AuthViewModel
+    private var diets: MutableList<Diet> = mutableListOf()
+    private var allergens: MutableList<Allergen> = mutableListOf()
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -59,6 +63,14 @@ class RegisterFragment : Fragment() {
         subscribeError()
         subscribeRegisterResult()
         launchLoginFragment()
+        diets = viewModel.getSelectedDiets() ?: mutableListOf()
+        allergens = viewModel.getSelectedAllergens() ?: mutableListOf()
+        diets.sortBy {
+            it.id
+        }
+        allergens.sortBy {
+            it.id
+        }
         bindRegisterButton()
     }
 
@@ -67,14 +79,6 @@ class RegisterFragment : Fragment() {
             val email = binding.emailEditText.text.toString()
             val username = binding.usernameEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
-            val diets = viewModel.getSelectedDiets() ?: mutableListOf()
-            val allergens = viewModel.getSelectedAllergens() ?: mutableListOf()
-            diets.sortBy {
-                it.id
-            }
-            allergens.sortBy {
-                it.id
-            }
             viewModel.register(email, password, username, diets, allergens)
         }
     }
