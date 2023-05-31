@@ -12,7 +12,7 @@
         android:elevation="10dp"
         android:id="@+id/bottom_sheet_root"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         app:behavior_hideable="true"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 

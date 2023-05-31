@@ -11,6 +11,6 @@ class ProductPhotosFeedbackActivity : AppCompatActivity() {
         setContentView(R.layout.activity_product_photos_feedback)
 
         findNavController(R.id.feedback_products_photos_container)
-            .setGraph(R.navigation.feedback_products_photos_navigation, intent.extras)
+            .setGraph(R.navigation.feedback_products_photos_navigation)
     }
 }

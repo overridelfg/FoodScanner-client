@@ -1,7 +1,6 @@
 package kirillrychkov.foodscanner_client.app.presentation.mainpage.feedbacks.nonexistent
 
 import android.graphics.Bitmap
-import androidx.constraintlayout.motion.utils.ViewState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,6 +40,14 @@ class FeedbackViewModel @Inject constructor(
 
     fun setFirstImage(bitmap: Bitmap){
         _getFirstImage.postValue(bitmap)
+    }
+
+    private val _currentBarcode = MutableLiveData<Long>()
+    val currentBarcode : LiveData<Long>
+        get() = _currentBarcode
+
+    fun setCurrentBarcode(barcode: Long){
+        _currentBarcode.value = barcode
     }
 
     fun provideImagesFeedback(firstImage: Bitmap, secondImage: Bitmap, barcode: Long){

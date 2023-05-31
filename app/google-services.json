@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "723703066147",
+    "project_id": "fodie-f04c2",
+    "storage_bucket": "fodie-f04c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:723703066147:android:02f995046c477275cbcb96",
+        "android_client_info": {
+          "package_name": "kirillrychkov.foodscanner_client"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXOjQLvHjZtIEyEsrzRaXOakw34z10iu8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:723703066147:android:9163db3c48194683cbcb96",
+        "android_client_info": {
+          "package_name": "kirillrychkov.foodscanner_client.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXOjQLvHjZtIEyEsrzRaXOakw34z10iu8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

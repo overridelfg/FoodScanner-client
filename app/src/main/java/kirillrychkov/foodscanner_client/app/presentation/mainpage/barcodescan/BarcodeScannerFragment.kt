@@ -99,7 +99,6 @@ class BarcodeScannerFragment : Fragment() {
         }
         binding.buttonHistory.setOnClickListener {
             startActivity(Intent(requireActivity(), BarcodeScannerHistoryActivity::class.java))
-//            findNavController().navigate(R.id.action_barcodeScannerFragment_to_barcodeScannerHistoryFragment)
         }
 
     }
@@ -132,7 +131,8 @@ class BarcodeScannerFragment : Fragment() {
                             BottomSheetBehavior.from(bottomSheetRoot)
                         mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         binding.bottomSheetProductDetailsError.buttonSendNonExistentProduct.setOnClickListener {
-                            startActivity(Intent(requireContext(), ProductPhotosFeedbackActivity::class.java))
+                            val intent = Intent(requireActivity(), ProductPhotosFeedbackActivity::class.java)
+                            startActivity(intent)
                         }
                     }
                 }
@@ -237,7 +237,6 @@ class BarcodeScannerFragment : Fragment() {
                             if(barcode.rawValue != null){
                                 viewModel.setCurrentBarcode(barcode.rawValue!!.toLong())
                                 viewModel.getProductDetails(barcode.rawValue!!.toLong())
-
                             }
                         }
                     })

@@ -14,6 +14,7 @@
     <string name="skip_button">Skip</string>
     <string name="choose_allergens_text">Каких из этих аллергенов Вы придерживаетесь?</string>
     <string name="choose_diets_text">Каких из этих диет Вы придерживаетесь?</string>
+    <string name="choose_avoidances_text">Избегаете ли Вы что-нибудь из этого?</string>
     <string name="sign_in">Войти</string>
     <string name="sign_up">Создать аккаунт</string>
     <string name="profile">Profile</string>
