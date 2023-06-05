@@ -39,6 +39,7 @@ class SecondPhotoProductImageFragment : Fragment() {
     private lateinit var viewModel: FeedbackViewModel
     private lateinit var currentSecondImage: Bitmap
     private lateinit var currentFirstImage: Bitmap
+    private var barcode: Long = 0
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -66,7 +67,7 @@ class SecondPhotoProductImageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        subscribePostFeedback()
+        subscribeGetCurrentBarcode()
         viewModel.getSecondImage.observe(viewLifecycleOwner) {
             binding.imagePic.setImageBitmap(it)
             currentSecondImage = it
@@ -89,13 +90,15 @@ class SecondPhotoProductImageFragment : Fragment() {
     }
 
 
-    private fun subscribePostFeedback() {
-
+    private fun subscribeGetCurrentBarcode() {
+        viewModel.currentBarcode.observe(viewLifecycleOwner){
+            barcode = it
+        }
     }
 
     private fun saveFeedbackToFirebase(image1: Bitmap, image2: Bitmap) {
         val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
-        val filename = "feedback " + sdf.format(Date())
+        val filename = sdf.format(Date())
         val file1 = convertToFile(image1, filename, "first")
         val file2 = convertToFile(image2, filename, "second")
         val imageRef = FirebaseStorage.getInstance().reference.child("image/${file1.name}")
@@ -123,7 +126,8 @@ class SecondPhotoProductImageFragment : Fragment() {
     }
 
     private fun convertToFile(image: Bitmap, filename: String, number: String): File {
-        val f = File(requireContext().cacheDir, "$filename $number" + ".jpg")
+        val currentBarcode = barcode.toString()
+        val f = File(requireContext().cacheDir, "$filename $number $currentBarcode" + ".jpg")
         f.parentFile?.mkdirs()
         f.createNewFile()
         val baos = ByteArrayOutputStream()

@@ -132,6 +132,7 @@ class BarcodeScannerFragment : Fragment() {
                         mBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         binding.bottomSheetProductDetailsError.buttonSendNonExistentProduct.setOnClickListener {
                             val intent = Intent(requireActivity(), ProductPhotosFeedbackActivity::class.java)
+                            intent.putExtra("BARCODE", currentBarcode)
                             startActivity(intent)
                         }
                     }

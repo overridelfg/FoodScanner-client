@@ -10,7 +10,9 @@ class ProductPhotosFeedbackActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product_photos_feedback)
 
+        val extras = intent.extras
+
         findNavController(R.id.feedback_products_photos_container)
-            .setGraph(R.navigation.feedback_products_photos_navigation)
+            .setGraph(R.navigation.feedback_products_photos_navigation, extras)
     }
 }

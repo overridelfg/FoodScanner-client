@@ -65,6 +65,8 @@ class FirstProductPhotoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startCamera()
+        val barcode = requireArguments().getLong("BARCODE")
+        viewModel.setCurrentBarcode(barcode)
         binding.buttonTakePicture.setOnClickListener {
             takePhoto()
         }

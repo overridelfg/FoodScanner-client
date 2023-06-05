@@ -9,6 +9,7 @@ import kirillrychkov.foodscanner_client.app.domain.OperationResult
 import kirillrychkov.foodscanner_client.app.domain.entity.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okio.IOException
 import org.json.JSONObject
 import retrofit2.HttpException
 import retrofit2.Response
@@ -67,7 +68,11 @@ class ProductsListPageSource(
 
             }catch (e: HttpException) {
                 return@withContext LoadResult.Error(e)
-            } catch (e: Exception) {
+
+            }
+            catch (e: IOException) {
+                return@withContext LoadResult.Error(e)
+            }catch (e: Exception) {
                 return@withContext LoadResult.Error(e)
             }
         }
